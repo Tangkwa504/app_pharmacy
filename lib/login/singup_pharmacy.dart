@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
@@ -11,6 +12,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:map_location_picker/map_location_picker.dart';
 
 import '../firebase_options.dart';
 import '../map/map.dart';
@@ -39,8 +41,8 @@ class singupmixpharmacy extends StatefulWidget {
 }
 
 class _singupmixpharmacyState extends State<singupmixpharmacy> {
-  TextEditingController Emailinput =
-      TextEditingController(); // ตั้งค่าชื่อตัวแปรที่รับจากผู้ใช้
+  TextEditingController Emailinput = TextEditingController(); // ตั้งค่าชื่อตัวแปรที่รับจากผู้ใช้
+  TextEditingController Emailchack = TextEditingController();
   TextEditingController UserPass = TextEditingController();
   TextEditingController Checkpass = TextEditingController();
   ImagePicker _picker = ImagePicker();
@@ -119,6 +121,7 @@ class _singupmixpharmacyState extends State<singupmixpharmacy> {
               ),
               child: TextField(
                 controller: Emailinput,
+                keyboardType: TextInputType.emailAddress ,
                 textAlignVertical: TextAlignVertical.center,
                 decoration: InputDecoration(
                   hintText: "Email address",
@@ -163,6 +166,13 @@ class _singupmixpharmacyState extends State<singupmixpharmacy> {
             const SizedBox(height: 12),
             InkWell(
               onTap: () {
+                bool mailchack = checkemail(Emailinput.text);
+                print(mailchack);
+                if(mailchack == true){
+                  Fluttertoast.showToast(
+                      msg: "อีเมลถูกใช้งานแล้ว", gravity: ToastGravity.TOP);
+                      return ;
+                }
                 if (Emailinput.text.isNotEmpty &&
                     UserPass.text.isNotEmpty &&
                     Checkpass.text.isNotEmpty &&
@@ -569,11 +579,35 @@ class _singupmix3State extends State<singupmix3> {
             ),
             const SizedBox(height: 12),
             InkWell(
-              onTap: () {
-                String latAndLobg =
-                    "${userLocation!.latitude}, ${userLocation!.longitude}";
-                Shopaddress.text = latAndLobg;
-              },
+              // onTap: () async {
+              //   Navigator.push(
+              //     context,
+              //     MaterialPageRoute(
+              //       builder: (context) {
+              //         return MapLocationPicker(
+              //           apiKey: "YOUR_API_KEY_HERE",
+              //           popOnNextButtonTaped: true,
+              //           currentLatLng: const LatLng(29.121599, 76.396698),
+              //           onNext: (GeocodingResult? result) {
+              //             if (result != null) {
+              //               setState(() {
+              //                 address = result.formattedAddress ?? "";
+              //               });
+              //             }
+              //           },
+              //           onSuggestionSelected: (PlacesDetailsResponse? result) {
+              //             if (result != null) {
+              //               setState(() {
+              //                 autocompletePlace =
+              //                     result.result.formattedAddress ?? "";
+              //               });
+              //             }
+              //           },
+              //         );
+              //       },
+              //     ),
+              //   );
+              // },
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 width: 400,
@@ -678,6 +712,31 @@ class _singupmix3State extends State<singupmix3> {
     );
   }
 }
+
+bool checkemail(String user) {
+  bool iserror = false;
+  DatabaseReference starCountRef = FirebaseDatabase.instance.ref('User');
+    starCountRef.onValue.listen((DatabaseEvent event) {
+      final data = event.snapshot.value;
+      Map<String, dynamic> map = json.decode(json.encode(data));
+      print(user);
+      list = [];
+      map.forEach(
+        (key, value) {
+          print(value["Email"]);
+          if(user==value["Email"].toString()){  //เช็คเมล userlogin    
+                  iserror = true;
+                      
+          }
+        },
+      );
+      list.forEach((element) {
+        print("$element");
+      });
+    });
+      return iserror;
+}
+
 
 void initfirebase() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);

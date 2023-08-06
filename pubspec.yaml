@@ -52,6 +52,7 @@ dependencies:
   flutter_rounded_date_picker: ^3.0.4
   intl: ^0.18.0
   socket_io_client: ^2.0.3+1
+  map_location_picker: ^0.0.1
 
 
 flutter_icons:
