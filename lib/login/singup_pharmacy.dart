@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
@@ -41,11 +42,13 @@ class singupmixpharmacy extends StatefulWidget {
 }
 
 class _singupmixpharmacyState extends State<singupmixpharmacy> {
-  TextEditingController Emailinput = TextEditingController(); // ตั้งค่าชื่อตัวแปรที่รับจากผู้ใช้
+  TextEditingController Emailinput =
+      TextEditingController(); // ตั้งค่าชื่อตัวแปรที่รับจากผู้ใช้
   TextEditingController Emailchack = TextEditingController();
   TextEditingController UserPass = TextEditingController();
   TextEditingController Checkpass = TextEditingController();
   ImagePicker _picker = ImagePicker();
+  bool iserror = false;
   Future<void> _pickImage() async {
     final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
     print("test");
@@ -121,7 +124,7 @@ class _singupmixpharmacyState extends State<singupmixpharmacy> {
               ),
               child: TextField(
                 controller: Emailinput,
-                keyboardType: TextInputType.emailAddress ,
+                keyboardType: TextInputType.emailAddress,
                 textAlignVertical: TextAlignVertical.center,
                 decoration: InputDecoration(
                   hintText: "Email address",
@@ -166,35 +169,57 @@ class _singupmixpharmacyState extends State<singupmixpharmacy> {
             const SizedBox(height: 12),
             InkWell(
               onTap: () {
-                bool mailchack = checkemail(Emailinput.text);
-                print(mailchack);
-                if(mailchack == true){
-                  Fluttertoast.showToast(
-                      msg: "อีเมลถูกใช้งานแล้ว", gravity: ToastGravity.TOP);
-                      return ;
-                }
-                if (Emailinput.text.isNotEmpty &&
-                    UserPass.text.isNotEmpty &&
-                    Checkpass.text.isNotEmpty &&
-                    UserPass.text == Checkpass.text) {
-                  Email = Emailinput.text;
-                  Password = UserPass.text;
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const singupmix2(),
-                      ));
-                } else if (UserPass.text != Checkpass.text) {
-                  Fluttertoast.showToast(
-                      msg: "รหัสผ่านไม่ตรงกัน", gravity: ToastGravity.TOP);
-                } else {
-                  Fluttertoast.showToast(
-                      msg: "โปรดกรอกข้อมูลให้ครบถ้วน",
-                      gravity: ToastGravity.TOP);
-                }
-                // Email = Emailinput.text;
-                // Password = UserPass.text;
-                // Navigator.push(context, MaterialPageRoute(builder: (context) => const singupmix2(),));
+                String user = Emailinput.text;
+                DatabaseReference starCountRef =
+                    FirebaseDatabase.instance.ref('User');
+                starCountRef.onValue.listen((DatabaseEvent event) {
+                  final data = event.snapshot.value;
+                  Map<String, dynamic> map = json.decode(json.encode(data));
+                  print("this is value from user : $user");
+                  map.forEach(
+                    (key, value) {
+                      print("this is value from firebase : ${value['Email']}");
+                      if (user == value["Email"].toString()) {
+                        //เช็คเมล userlogin
+                        setState(() {
+                          iserror = true;
+                        });
+                        print("$iserror = Iserror");
+                        print("value has been set true");
+                      }
+                    },
+                  );
+                });
+                Timer(const Duration(seconds: 1), () {
+                  print("value bool : $iserror");
+                  if (iserror) {
+                    Fluttertoast.showToast(
+                        msg: "อีเมลถูกใช้งานแล้ว", gravity: ToastGravity.TOP);
+                    return;
+                  }
+                  if (Emailinput.text.isNotEmpty &&
+                      UserPass.text.isNotEmpty &&
+                      Checkpass.text.isNotEmpty &&
+                      UserPass.text == Checkpass.text) {
+                    Email = Emailinput.text;
+                    Password = UserPass.text;
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const singupmix2(),
+                        ));
+                  } else if (UserPass.text != Checkpass.text) {
+                    Fluttertoast.showToast(
+                        msg: "รหัสผ่านไม่ตรงกัน", gravity: ToastGravity.TOP);
+                  } else {
+                    Fluttertoast.showToast(
+                        msg: "โปรดกรอกข้อมูลให้ครบถ้วน",
+                        gravity: ToastGravity.TOP);
+                  }
+                  // Email = Emailinput.text;
+                  // Password = UserPass.text;
+                  // Navigator.push(context, MaterialPageRoute(builder: (context) => const singupmix2(),));
+                });
               },
               child: Container(
                 width: 400,
@@ -716,27 +741,28 @@ class _singupmix3State extends State<singupmix3> {
 bool checkemail(String user) {
   bool iserror = false;
   DatabaseReference starCountRef = FirebaseDatabase.instance.ref('User');
-    starCountRef.onValue.listen((DatabaseEvent event) {
-      final data = event.snapshot.value;
-      Map<String, dynamic> map = json.decode(json.encode(data));
-      print(user);
-      list = [];
-      map.forEach(
-        (key, value) {
-          print(value["Email"]);
-          if(user==value["Email"].toString()){  //เช็คเมล userlogin    
-                  iserror = true;
-                      
-          }
-        },
-      );
-      list.forEach((element) {
+  starCountRef.onValue.listen((DatabaseEvent event) {
+    final data = event.snapshot.value;
+    Map<String, dynamic> map = json.decode(json.encode(data));
+    print("this is value from user : $user");
+    map.forEach(
+      (key, value) {
+        print("this is value from firebase : ${value['Email']}");
+        if (user == value["Email"].toString()) {
+          //เช็คเมล userlogin
+          iserror = true;
+          print("$iserror = Iserror");
+          print("value has been set true");
+        }
+      },
+    );
+    /* list.forEach((element) {
         print("$element");
-      });
-    });
-      return iserror;
+      }); */
+  });
+  print("$iserror = after return");
+  return iserror;
 }
-
 
 void initfirebase() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
