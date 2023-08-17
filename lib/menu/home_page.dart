@@ -46,7 +46,7 @@ class _HomePageState extends State<HomePage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                Bottonhome(title: "QRCODE",page: ProductsPage(),icon: Icons.qr_code),
+                Bottonhome(title: "คลังยา",page: ProductsPage(),icon: Icons.store),
                 Bottonhome(title: "ประวัติสนทนา",page: LoginScreen(),icon: Icons.chat),
               ],
             ),

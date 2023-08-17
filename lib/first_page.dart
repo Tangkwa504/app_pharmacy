@@ -1,16 +1,17 @@
 import 'dart:async';
 
-import 'package:app_pharmacy/login/singupmix_screen.dart';
+//import 'package:app_pharmacy/login/singupmix_screen.dart';
 import 'package:app_pharmacy/menu/home_screen.dart';
 import 'package:app_pharmacy/login/login_screen.dart';
-import 'package:app_pharmacy/login/singup_screen.dart';
+//import 'package:app_pharmacy/login/singup_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:map_location_picker/map_location_picker.dart';
 import 'package:provider/provider.dart';
 
 import 'login/singup_pharmacy.dart';
-import 'menu/home_screenguest.dart';
+//import 'menu/home_screenguest.dart';
 import 'widgets/Service.dart';
 
 class FirstPage extends StatefulWidget {
@@ -120,6 +121,40 @@ class _FirstPageState extends State<FirstPage> {
                 ),
               ),
               const SizedBox(height: 12),
+              Center(
+                child: ElevatedButton(
+                  child: const Text('Pick location'),
+                  onPressed: () async {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return MapLocationPicker(
+                            apiKey: "AIzaSyAqyETt9iu7l5QioWz5iwEbzrallQrpzLs",
+                            popOnNextButtonTaped: true,
+                            currentLatLng: const LatLng(29.146727, 76.464895),
+                            onNext: (GeocodingResult? result) {
+                              if (result != null) {
+                                setState(() {
+                                  print(result.formattedAddress ?? "");
+                                });
+                              }
+                            },
+                            /* onSuggestionSelected:
+                                (PlacesDetailsResponse? result) {
+                              if (result != null) {
+                                setState(() {
+                                      result.result.formattedAddress ?? "";
+                                });
+                              }
+                            }, */
+                          );
+                        },
+                      ),
+                    );
+                  },
+                ),
+              ),
               // InkWell(
               //   onTap: () {
               //     Navigator.push(context, MaterialPageRoute(builder: (context) => HomeScreenguest(id: 'guset',),));

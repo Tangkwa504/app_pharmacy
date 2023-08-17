@@ -1,15 +1,15 @@
-import 'package:app_pharmacy/menu/home_screen.dart';
+//import 'package:app_pharmacy/menu/home_screen.dart';
 import 'package:app_pharmacy/first_page.dart';
-import 'package:app_pharmacy/login/login_screen.dart';
-import 'package:app_pharmacy/profile/setting_profile.dart';
+//import 'package:app_pharmacy/login/login_screen.dart';
+//import 'package:app_pharmacy/profile/setting_profile.dart';
 import 'package:app_pharmacy/widgets/Service.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'firebase_options.dart';
 
-import 'chatmockup.dart';
-import 'login/login_test.dart';
+//import 'chatmockup.dart';
+//import 'login/login_test.dart';
 
 void main()async{ 
   runApp(const MyApp());
