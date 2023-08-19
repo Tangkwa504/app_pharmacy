@@ -194,7 +194,7 @@ void checklogin(String user ,String password,context) {
         Provider.of<ProviderSer>(context, listen: false);
     Useridprovider provideruserid =
         Provider.of<Useridprovider>(context, listen: false);
-    DatabaseReference starCountRef = FirebaseDatabase.instance.ref('User');
+    DatabaseReference starCountRef = FirebaseDatabase.instance.ref('Pharmacy');
     starCountRef.onValue.listen((DatabaseEvent event) {
       final data = event.snapshot.value;
       Map<String, dynamic> map = json.decode(json.encode(data));

@@ -132,22 +132,25 @@ class _FirstPageState extends State<FirstPage> {
                           return MapLocationPicker(
                             apiKey: "AIzaSyAqyETt9iu7l5QioWz5iwEbzrallQrpzLs",
                             popOnNextButtonTaped: true,
-                            currentLatLng: const LatLng(29.146727, 76.464895),
+                            currentLatLng: const LatLng(13.7758875, 100.510363),
                             onNext: (GeocodingResult? result) {
                               if (result != null) {
+                                Location latlong = result.geometry.location;
                                 setState(() {
-                                  print(result.formattedAddress ?? "");
+                                  print("=============> ${latlong.lat}");
+                                  print("=============> ${latlong.lng}");
                                 });
                               }
                             },
-                            /* onSuggestionSelected:
+                            onSuggestionSelected:
                                 (PlacesDetailsResponse? result) {
                               if (result != null) {
                                 setState(() {
-                                      result.result.formattedAddress ?? "";
+                                  print(result.result.geometry!.location);
+                                  result.result.formattedAddress ?? "";
                                 });
                               }
-                            }, */
+                            },
                           );
                         },
                       ),

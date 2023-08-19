@@ -31,8 +31,8 @@ String Nameshop = "";
 String Addressshop = "";
 String Timeopening = "";
 String Timeclosing = "";
-String lat = "";
-String long = "";
+late double lat  ;
+late double long ;
 
 class singupmixpharmacy extends StatefulWidget {
   const singupmixpharmacy({super.key});
@@ -461,6 +461,7 @@ class _singupmix3State extends State<singupmix3> {
   TextEditingController Shopaddress = TextEditingController();
   TextEditingController Openingtime = TextEditingController();
   TextEditingController Closingtime = TextEditingController();
+
   ImagePicker _picker = ImagePicker();
   ImagePicker _pickershop = ImagePicker();
   Position? userLocation;
@@ -540,6 +541,7 @@ class _singupmix3State extends State<singupmix3> {
     userLocation = await Geolocator.getCurrentPosition();
   } */
 
+
   @override
   Widget build(BuildContext context) {
     ProviderSer profileService =
@@ -604,35 +606,42 @@ class _singupmix3State extends State<singupmix3> {
             ),
             const SizedBox(height: 12),
             InkWell(
-              // onTap: () async {
-              //   Navigator.push(
-              //     context,
-              //     MaterialPageRoute(
-              //       builder: (context) {
-              //         return MapLocationPicker(
-              //           apiKey: "YOUR_API_KEY_HERE",
-              //           popOnNextButtonTaped: true,
-              //           currentLatLng: const LatLng(29.121599, 76.396698),
-              //           onNext: (GeocodingResult? result) {
-              //             if (result != null) {
-              //               setState(() {
-              //                 address = result.formattedAddress ?? "";
-              //               });
-              //             }
-              //           },
-              //           onSuggestionSelected: (PlacesDetailsResponse? result) {
-              //             if (result != null) {
-              //               setState(() {
-              //                 autocompletePlace =
-              //                     result.result.formattedAddress ?? "";
-              //               });
-              //             }
-              //           },
-              //         );
-              //       },
-              //     ),
-              //   );
-              // },
+              onTap: () async {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return MapLocationPicker(
+                            apiKey: "AIzaSyAqyETt9iu7l5QioWz5iwEbzrallQrpzLs",
+                            popOnNextButtonTaped: true,
+                            currentLatLng: LatLng(userLocation!.latitude,userLocation!.longitude),
+                            onNext: (GeocodingResult? result) {
+                              if (result != null) {
+                                Location latlong = result.geometry.location;
+                                setState(() {
+                                  print("1=============> ${result.formattedAddress}");
+                                  Shopaddress.text = result.formattedAddress.toString();
+                                  print("=============> ${latlong.lat}");
+                                  print("=============> ${latlong.lng}");
+                                  lat  = latlong.lat;
+                                  long = latlong.lng;
+                                });
+                              }
+                            },
+                            onSuggestionSelected:
+                                (PlacesDetailsResponse? result) {
+                              if (result != null) {
+                                setState(() {
+                                  print(result.result.geometry!.location);
+                                  result.result.formattedAddress ?? "";
+                                });
+                              }
+                            },
+                          );
+                        },
+                      ),
+                    );
+                  },
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 width: 400,
@@ -776,7 +785,7 @@ void writefirebase(ProviderSer provider) async {
 
   String getRandomString(int length) => String.fromCharCodes(Iterable.generate(
       length, (_) => _chars.codeUnitAt(_rnd.nextInt(_chars.length))));
-  String path = "User/${getRandomString(10)}";
+  String path = "Pharmacy/${getRandomString(10)}";
   DatabaseReference ref = FirebaseDatabase.instance.ref(path);
   await ref.set({
     "Email": Email,
@@ -788,6 +797,9 @@ void writefirebase(ProviderSer provider) async {
     "Addressshop": Addressshop,
     "Timeopening": Timeopening,
     "Timeclosing": Timeclosing,
+    "latitude"  : lat,
+    "longitude" : long,
+
   });
   provider.setemail(Email);
   provider.uploadImages();

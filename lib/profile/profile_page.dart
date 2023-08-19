@@ -32,7 +32,7 @@ String? url;
 
 class _ProfilePageState extends State<ProfilePage> {
   @override
-  DatabaseReference starCountRef = FirebaseDatabase.instance.ref('User');
+  DatabaseReference starCountRef = FirebaseDatabase.instance.ref('Pharmacy');
 
   void initState() {
     // TODO: implement initState
