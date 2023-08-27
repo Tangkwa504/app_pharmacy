@@ -38,7 +38,7 @@ class _HomePageState extends State<HomePage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                Bottonhome(title: "ค้นหาอัตโนมัติ",page: Shopprofile(),icon: Icons.refresh),
+                Bottonhome(title: "ค้นหาอัตโนมัติ",page: ProductsPage(),icon: Icons.refresh),
                 Bottonhome(title: "ค้นหาร้านยา",page: MapsPage(lat:"",long:""),icon: Icons.pin_drop),
               ],
             ),

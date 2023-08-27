@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:app_pharmacy/login/singup_pharmacy.dart';
 import 'package:app_pharmacy/model/Userid.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:app_pharmacy/login/singupmix_screen.dart';
@@ -144,7 +145,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(width: 12),
                 GestureDetector(
                   onTap: (){
-                    Navigator.push(context, MaterialPageRoute(builder: ((context) => const singupmix()))); 
+                    Navigator.push(context, MaterialPageRoute(builder: ((context) => const singupmixpharmacy()))); 
                   },
                   child: const Text(
                     "Signup",

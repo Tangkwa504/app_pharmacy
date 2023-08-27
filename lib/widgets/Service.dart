@@ -123,6 +123,21 @@ class ProviderSer extends ChangeNotifier {
     }
     return null;
   }
+  Future<String?> getProfileshopImageUrl(String email) async {
+    try {
+      final ref = store.ref('users/$email/imageshop');
+      final result = await ref.listAll();
+      if (result.items.isNotEmpty) {
+        final url = await result.items.first.getDownloadURL();
+        print(url);
+        return url;
+      }
+      return null;
+    } catch (e) {
+      print('Error getting profile image URL: $e');
+    }
+    return null;
+  }
 
   Future<void> uploadImages() async {
     if (reademail == "") {

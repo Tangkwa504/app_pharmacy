@@ -171,7 +171,7 @@ class _singupmixpharmacyState extends State<singupmixpharmacy> {
               onTap: () {
                 String user = Emailinput.text;
                 DatabaseReference starCountRef =
-                    FirebaseDatabase.instance.ref('User');
+                    FirebaseDatabase.instance.ref('Pharmacy');
                 starCountRef.onValue.listen((DatabaseEvent event) {
                   final data = event.snapshot.value;
                   Map<String, dynamic> map = json.decode(json.encode(data));
