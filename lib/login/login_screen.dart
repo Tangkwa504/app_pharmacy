@@ -2,25 +2,20 @@ import 'dart:convert';
 import 'package:app_pharmacy/login/singup_pharmacy.dart';
 import 'package:app_pharmacy/model/Userid.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:app_pharmacy/login/singupmix_screen.dart';
 
-import 'package:app_pharmacy/login/singup_screen.dart';
-import 'package:app_pharmacy/first_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:firebase_core/firebase_core.dart';
+
 import 'package:provider/provider.dart';
 
 
 
 import '../firebase_options.dart';
 import '../menu/home_screen.dart';
-import '../profile/profile_page.dart';
-import '../system/cookise.dart';
 import '../widgets/Service.dart';
 
 class LoginScreen extends StatefulWidget {

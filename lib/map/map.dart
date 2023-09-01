@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -7,16 +9,18 @@ import 'package:provider/provider.dart';
 
 import '../Role_pharmacy/shopprofile.dart';
 import '../firebase_options.dart';
+import '../model/createmarker.dart';
 import '../widgets/Service.dart';
 
 class MapsPage extends StatefulWidget {
-  MapsPage({super.key, required this.lat ,required this.long});
+  MapsPage({super.key, required this.lat ,required this.long,required this.opennow});
 
   @override
   _MapsPageState createState() => _MapsPageState();
   
   String lat;
   String long;
+  bool opennow;
 
 
 }
@@ -27,11 +31,55 @@ class _MapsPageState extends State<MapsPage> {
   late GoogleMapController mapController;
   List<Marker> _markers = [];
   List<Marker> shopMarkers = [];
+  List<shopmarkermodel> shopdata = [];
+  Marker? nearestMarker;
+  double? nearestDistance;
 
-void initState() {
-    super.initState();
-    initfirebase();
+  
+  // ฟังก์ชันสำหรับคำนวณ Marker ที่ใกล้ที่สุด
+  void findNearestMarker({bool opennow = false}) {
+    double minDistance = double.infinity;
+    Marker? nearest;
+    
+    for (Marker marker in shopMarkers) {
+      double distance = Geolocator.distanceBetween(
+        userLocation.latitude,
+        userLocation.longitude,
+        marker.position.latitude,
+        marker.position.longitude,
+      );
+
+      if (distance < minDistance) {
+        minDistance = distance;
+        nearest = marker;
+      }
+    }
+    if(opennow ){
+      nearestMarker = nearest;
+      nearestDistance = minDistance;
+      print("ทดสอบบบ =  ${nearestMarker}");
+      List<shopmarkermodel> nearshop = shopdata.where((element) => MarkerId(element.id) == nearestMarker?.markerId).toList();
+      if(nearshop.length > 0){
+        openprofileshop(address: nearshop[0].address, licensepharmacy: nearshop[0].licensepharmacy, pharmacyname: nearshop[0].pharmacyname, timeclosing: nearshop[0].timeclosing, timeopening: nearshop[0].timeopening, title: nearshop[0].title, url: nearshop[0].url);
+        print("URLINOPEN ===== ${nearshop[0].url}");
+      }
+      print('ทดสอบ 2  ====  $nearshop');
+    }
+    else{
+    setState(() {
+      nearestMarker = nearest;
+      nearestDistance = minDistance;
+      
+    });
+    }
+
+    if (nearest != null) {
+      mapController.animateCamera(CameraUpdate.newLatLng(nearest.position));
+    }
   }
+
+
+
 
 
 
@@ -74,13 +122,21 @@ void _onMarkerTapped(Marker marker) {
   );
 }
 
-void createMarker(double lat, double lng, String id, String title, String address, String pharmacyname, String timeopening, String timeclosing, String? url) {
+void openprofileshop({required String address, required String pharmacyname, required String title, required String timeclosing, required String 
+timeopening, required String? url, required String licensepharmacy}){
+  Navigator.push(context, MaterialPageRoute(builder: (context) => Shopprofile(Addressshop: address, Pharmacyname: pharmacyname, Shopname: title,
+         Timeclosing: timeclosing, Timeopening: timeopening, Url: url, Licensepharmacy: licensepharmacy)));
+          print("URL ====== $url");
+}
+
+void createMarker(double lat, double lng, String id, String title, String address, String pharmacyname, String timeopening, String timeclosing, String? url, String licensepharmacy) {
   Marker newMarker = Marker(
     markerId: MarkerId(id),
     infoWindow: InfoWindow(
       title: title,
       onTap: () {
-        Navigator.push(context, MaterialPageRoute(builder: (context) => Shopprofile(Addressshop: address, Pharmacyname: pharmacyname, Shopname: title, Timeclosing: timeclosing, Timeopening: timeopening, Url: url)));
+        Navigator.push(context, MaterialPageRoute(builder: (context) => Shopprofile(Addressshop: address, Pharmacyname: pharmacyname, Shopname: title,
+         Timeclosing: timeclosing, Timeopening: timeopening, Url: url, Licensepharmacy: licensepharmacy)));
         print("Testmapp");
       },
     ),
@@ -89,6 +145,7 @@ void createMarker(double lat, double lng, String id, String title, String addres
 
   setState(() {
     shopMarkers.add(newMarker);
+    shopdata.add(shopmarkermodel(lat: lat, lng: lng, address: address, id: id, pharmacyname: pharmacyname, timeclosing: timeclosing, timeopening: timeopening, title: title, licensepharmacy: licensepharmacy,url: url));
   });
 
    // Print ค่าเพื่อตรวจสอบว่าฟังก์ชันถูกเรียก
@@ -97,9 +154,13 @@ void createMarker(double lat, double lng, String id, String title, String addres
 
  void _onMapCreated(GoogleMapController controller) {
   mapController = controller;
-  _addMarker(userLocation.latitude, userLocation.longitude, 'ตำแหน่งของคุณ', '', (marker) {
-    _onMarkerTapped(marker);
-  });
+  if(widget.opennow){
+    Timer(Duration(seconds: 3), () {findNearestMarker(opennow: true);});
+    
+  }
+  // _addMarker(userLocation.latitude, userLocation.longitude, 'ตำแหน่งของคุณ', '', (marker) {
+  //   _onMarkerTapped(marker);
+  // });
 
   DatabaseReference starCountRef = FirebaseDatabase.instance.ref('Pharmacy');
   starCountRef.onValue.listen((DatabaseEvent event) {
@@ -114,11 +175,12 @@ void createMarker(double lat, double lng, String id, String title, String addres
       String markerPharmacyname  = value['Name'];
       String markerTimeopening  = value['Timeopening'];
       String markerTimeclosing  = value['Timeclosing'];
+      String markerLicensepharmacy = value['Licensepharmacy'];
       ProviderSer profileService =
         Provider.of<ProviderSer>(context, listen: false);
         String? url = await profileService.getProfileshopImageUrl(markerId);
 
-      createMarker(markerLatitude, markerLongitude, markerId, markerTitle, markerAddressshop, markerPharmacyname, markerTimeopening, markerTimeclosing,url);
+      createMarker(markerLatitude, markerLongitude, markerId, markerTitle, markerAddressshop, markerPharmacyname, markerTimeopening, markerTimeclosing,url,markerLicensepharmacy);
 
       // Print ค่าที่ถูกเพิ่มลงใน shopMarkers
         print('Added marker with id=$markerId, title=$markerTitle, lat=$markerLatitude, lng=$markerLongitude');
@@ -126,6 +188,7 @@ void createMarker(double lat, double lng, String id, String title, String addres
     }
   });
 }
+
 
 
 
@@ -210,25 +273,19 @@ void createMarker(double lat, double lng, String id, String title, String addres
           }
         },
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          mapController.animateCamera(CameraUpdate.newLatLngZoom(
-              LatLng(userLocation.latitude, userLocation.longitude), 18));
-              widget.lat = userLocation.latitude.toString();
-              widget.long = userLocation.longitude.toString();
-          showDialog(
-            context: context,
-            builder: (context) {
-              return AlertDialog(
-                content: Text(
-                    'Your location has been send !\nlat: ${userLocation.latitude} long: ${userLocation.longitude} '),
-              );
-            },
-          );
-          Navigator.pop(context);
-        },
-        label: Text("Send Location"),
-        icon: Icon(Icons.near_me),
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          FloatingActionButton.extended(
+            onPressed: findNearestMarker,
+            label: Text("ค้นหา Marker ที่ใกล้ที่สุด"),
+            icon: Icon(Icons.place),
+          ),
+          if (nearestMarker != null && nearestDistance != null)
+            Text("Marker ที่ใกล้ที่สุด: ${nearestMarker!.infoWindow.title}"),
+          if (nearestMarker != null && nearestDistance != null)
+            Text("ระยะทาง: ${nearestDistance!.toStringAsFixed(2)} เมตร"),
+        ],
       ),
     );
   }

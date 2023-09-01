@@ -16,7 +16,6 @@ import 'package:provider/provider.dart';
 import 'package:map_location_picker/map_location_picker.dart';
 
 import '../firebase_options.dart';
-import '../map/map.dart';
 import '../widgets/Service.dart';
 import 'login_screen.dart';
 
@@ -49,6 +48,7 @@ class _singupmixpharmacyState extends State<singupmixpharmacy> {
   TextEditingController Checkpass = TextEditingController();
   ImagePicker _picker = ImagePicker();
   bool iserror = false;
+  bool iserror2 = false;
   Future<void> _pickImage() async {
     final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
     print("test");
@@ -62,20 +62,15 @@ class _singupmixpharmacyState extends State<singupmixpharmacy> {
     }
   }
 
+  bool isValidEmail(String email) {
+  // ใช้ Regular Expression เพื่อตรวจสอบรูปแบบอีเมล
+  final emailRegex = RegExp(r'^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$');
+  return emailRegex.hasMatch(email);
+}  
+  
+
   @override
   Widget build(BuildContext context) {
-    // ImagePicker _picker = ImagePicker();
-    // Future<void> _pickImage(String uid) async {
-    //   final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
-    //   if (pickedFile != null) {
-    //     List<File> images = [];
-    //     File imageFile = File(pickedFile.path);
-    //     images.add(imageFile);
-    //     ProviderSer profileService =
-    //         Provider.of<ProviderSer>(context, listen: false);
-    //     profileService.addFile(images);
-    //   }
-    // }
     ProviderSer profiletestService =
         Provider.of<ProviderSer>(context, listen: false);
     return Scaffold(
@@ -169,7 +164,14 @@ class _singupmixpharmacyState extends State<singupmixpharmacy> {
             const SizedBox(height: 12),
             InkWell(
               onTap: () {
-                String user = Emailinput.text;
+                String user = Emailinput.text.trim();
+                if (!isValidEmail(user)) {
+                  Fluttertoast.showToast(
+                    msg: "ประเภทของอีเมลที่ใช้สมัครไม่ถูกต้อง",
+                    gravity: ToastGravity.TOP,
+                    );
+                    return;
+                    }
                 DatabaseReference starCountRef =
                     FirebaseDatabase.instance.ref('Pharmacy');
                 starCountRef.onValue.listen((DatabaseEvent event) {
