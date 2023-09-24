@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 
+import '../chat/chat.dart';
+
 class Shopprofile extends StatefulWidget {
   Shopprofile({
     super.key,
@@ -95,7 +97,7 @@ class _ShopprofileState extends State<Shopprofile> {
             Center(
               child: InkWell(
                 onTap: () {
-                  //Navigator.push(context, MaterialPageRoute(builder: (context) => const ProfilePage(),));
+          
                 },
                 child: Container(
                   width: 200,

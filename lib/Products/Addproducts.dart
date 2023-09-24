@@ -27,7 +27,8 @@ class _AddproductState extends State<Addproduct> {
   double? price;
   int? quantity;
   final date = TextEditingController();
-
+  final enddate = TextEditingController();
+  String? dayremain;
 
   void _pickImage() async {
     final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
@@ -55,7 +56,7 @@ class _AddproductState extends State<Addproduct> {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
       final downloadUrl = await productProvider.uploadProfileImage(_image!,productService.reademail);
-      final product = Product(name: name!, image: downloadUrl, price: price!,quantity: quantity!,date: date.text);
+      final product = Product(nameDrug: name!, image: downloadUrl, price: price!,quantity: quantity!,startdate: date.text,enddate: enddate.text,dayremain: dayremain!);
       productProvider.addProduct(product,productService.reademail);
 
       Navigator.pop(context);

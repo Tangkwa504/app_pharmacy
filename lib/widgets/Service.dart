@@ -20,6 +20,7 @@ class Appservice {
 
 class ProviderSer extends ChangeNotifier {
   String reademail = "";
+  String readid = "";
   List<File> imgfile = [];
   List<File> imgfileshop = [];
   List<String> imgurl = [];
@@ -76,8 +77,9 @@ class ProviderSer extends ChangeNotifier {
     await cartRef.set({'products': products});
   }
 
-  void setemail(String mail) async {
+  void setemail(String mail,String id) async {
     reademail = mail;
+    readid = id;
     url = await getProfileImageUrl();
     print(url);
     notifyListeners();
@@ -185,7 +187,7 @@ class ProviderSer extends ChangeNotifier {
         String imageName = const Uuid().v4();
         final Reference storageRef = FirebaseStorage.instance
             .ref('users/${reademail}/imageshop/$imageName');
-        final UploadTask uploadTask = storageRef.putFile(imgfile[i]);
+        final UploadTask uploadTask = storageRef.putFile(imgfileshop[i]);
         final TaskSnapshot downloadUrl = await uploadTask.whenComplete(() {
           print("Upload for ${reademail} with Image $imageName");
         });
@@ -272,7 +274,7 @@ class CartProvider extends ChangeNotifier {
       0, (total, product) => total + product.price * product.quantity);
 
   void addProduct(Product product, String email) async {
-    final index = _products.indexWhere((p) => p.name == product.name);
+    final index = _products.indexWhere((p) => p.nameDrug == product.nameDrug);
     final cartRef = fireStore.collection('carts').doc(email);
     if (index != -1) {
       _products[index].quantity += product.quantity;
@@ -303,7 +305,7 @@ class CartProvider extends ChangeNotifier {
   }
 
   void removeProduct(Product product, String email) async {
-    _products.removeWhere((p) => p.name == product.name);
+    _products.removeWhere((p) => p.nameDrug == product.nameDrug);
     final cartRef = fireStore.collection('carts').doc(email);
     await cartRef.update({
       'products': FieldValue.arrayRemove([product.toJson()])
@@ -356,3 +358,4 @@ class Useridprovider extends ChangeNotifier {
        notifyListeners();
   }
 }
+

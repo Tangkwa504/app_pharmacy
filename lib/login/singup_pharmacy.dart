@@ -464,21 +464,21 @@ class _singupmix3State extends State<singupmix3> {
   TextEditingController Openingtime = TextEditingController();
   TextEditingController Closingtime = TextEditingController();
 
-  ImagePicker _picker = ImagePicker();
+  //ImagePicker _picker = ImagePicker();
   ImagePicker _pickershop = ImagePicker();
   Position? userLocation;
-  Future<void> _pickImage() async {
-    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
-    print("test");
-    if (pickedFile != null) {
-      List<File> images = [];
-      File imageFile = File(pickedFile.path);
-      images.add(imageFile);
-      ProviderSer profileService =
-          Provider.of<ProviderSer>(context, listen: false);
-      profileService.addFile(images);
-    }
-  }
+  // Future<void> _pickImage() async {
+  //   final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+  //   print("test");
+  //   if (pickedFile != null) {
+  //     List<File> images = [];
+  //     File imageFile = File(pickedFile.path);
+  //     images.add(imageFile);
+  //     ProviderSer profileService =
+  //         Provider.of<ProviderSer>(context, listen: false);
+  //     profileService.addFile(images);
+  //   }
+  // }
 
   Future<void> _pickImageshop() async {
     final pickedFile = await _pickershop.pickImage(source: ImageSource.gallery);
@@ -785,9 +785,13 @@ void writefirebase(ProviderSer provider) async {
       'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
   Random _rnd = Random();
 
+
+  
+
   String getRandomString(int length) => String.fromCharCodes(Iterable.generate(
       length, (_) => _chars.codeUnitAt(_rnd.nextInt(_chars.length))));
-  String path = "Pharmacy/${getRandomString(10)}";
+      String rendomString = getRandomString(10);
+  String path = "Pharmacy/${rendomString}";
   DatabaseReference ref = FirebaseDatabase.instance.ref(path);
   await ref.set({
     "Email": Email,
@@ -801,9 +805,11 @@ void writefirebase(ProviderSer provider) async {
     "Timeclosing": Timeclosing,
     "latitude"  : lat,
     "longitude" : long,
+    "Id": rendomString,
+    "requset"   : [{"email":"testmail","status":1},{"email":"testmail2","status":0}]
 
   });
-  provider.setemail(Email);
+  provider.setemail(Email,rendomString);
   provider.uploadImages();
   provider.uploadImagesshop();
   provider.createcol(Email);

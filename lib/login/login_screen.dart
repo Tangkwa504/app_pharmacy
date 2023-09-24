@@ -205,9 +205,10 @@ void checklogin(String user ,String password,context) {
                       msg: "ยินดีต้อนรับคุณ "+ value["Name"]+" เข้าสู่ระบบ", gravity: ToastGravity.TOP,
                       backgroundColor: Colors.green
                       );
+                      print(user);
               String pushemail = user;
-              appservice.email = "1";
-              profileService.setemail(user);
+              appservice.email = pushemail;
+              profileService.setemail(user,value["Id"]);
               profileService.setkey(key);
               profileService.setuser(value["Name"],value["Password"],value["Addressshop"],value["Tel"]); //เช็ค login pharmacy
               //profileService.setuser(value["Name"],value["Password"],value["Address"],value["Tel"]); //เช็ค Login User 

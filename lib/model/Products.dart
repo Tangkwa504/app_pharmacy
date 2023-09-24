@@ -1,52 +1,64 @@
 class Product {
-  final String name;
+  final String nameDrug;
   final String image;
   final double price;
-  final String date;
+  final String startdate;
+  final String enddate;
+  final String dayremain;
   int quantity;
   
 
   Product({
-    required this.name,
+    required this.nameDrug,
     required this.image,
     required this.price,
-    required this.date,
     required this.quantity,
+    required this.dayremain,
+    required this.enddate,
+    required this.startdate
   });
 
   Product copyWith({
-    String? name,
+    String? nameDrug,
     String? image,
+    String? dayremain,
     double? price,
     int? quantity,
-    String? date,
+    String? enddate,
+    String? startdate,
   }) {
     return Product(
-      name: name ?? this.name,
+      nameDrug: nameDrug ?? this.nameDrug,
       image: image ?? this.image,
       price: price ?? this.price,
       quantity: quantity ?? this.quantity,
-      date: date ?? this.date,
+      startdate: startdate ?? this.startdate,
+      enddate: enddate ?? this.enddate,
+      dayremain: dayremain ?? this.dayremain,
     );
   }
 
   factory Product.fromJson(Map<String, dynamic> json) {
     return Product(
-      name: json['name'],
+      nameDrug: json['nameDrug'],
       image: json['image'],
       price: json['price'].toDouble(),
       quantity: json['quantity'] ?? 1,
-      date: json['date'],
+      startdate: json['startdate'],
+      enddate: json['enddate'],
+      dayremain: json['dayremain'],
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'name': name,
+      'nameDrug': nameDrug,
       'image': image,
       'price': price,
       'quantity': quantity,
-      'date': date,
+      'startdate': startdate,
+      'enddate': enddate,
+      'dayremain':dayremain,
     };
   }
 }

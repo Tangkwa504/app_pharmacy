@@ -23,7 +23,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.product.name),
+        title: Text(widget.product.nameDrug),
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -35,7 +35,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  widget.product.name,
+                  widget.product.nameDrug,
                   style: const TextStyle(fontSize: 24),
                 ),
                 const SizedBox(height: 16),

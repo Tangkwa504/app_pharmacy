@@ -1,72 +1,49 @@
-import 'dart:convert';
-
-
-import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_database/firebase_database.dart';
 
-import 'package:flutter/src/widgets/framework.dart';
-
-
-
-class test extends StatefulWidget {
-  const test({super.key});
-
-  @override
-  State<test> createState() => _testState();
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  runApp(MyApp());
 }
 
-class _testState extends State<test> {
-  List users = [];  //สร้างอาเรย์เก็บ user จาก firebase
+class MyApp extends StatelessWidget {
   @override
-  void initState() {
-    // TODO: implement initState
-    initfirebase();
-    super.initState();
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Firebase Example',
+      home: MyHomePage(),
+    );
   }
-  void initfirebase () async{
- 
-  readfirebase();
 }
-void readfirebase () async{
-  print("read");
-  DatabaseReference ref =
-        FirebaseDatabase.instance.ref('test'); // ดึงข้อมูลจาก key หลักของ database
-  ref.onValue.listen((DatabaseEvent event) {
-    final data = event.snapshot.value;
-    Map<String, dynamic> map = json.decode(json.encode(data));
-    print("data ${ data.runtimeType }");
-    
-    //print(event);
-    //print(data);
-    print(map);
-    users.clear();
-    map.forEach((key, value) {  // อ่านข้อมูลจาก database
-      print("key ${ key }");
-      print("value ${ value }");
-      users.add(value);
-    });
-    setState(() {
-      
-    });
-});
+
+class MyHomePage extends StatefulWidget {
+  @override
+  _MyHomePageState createState() => _MyHomePageState();
 }
+
+class _MyHomePageState extends State<MyHomePage> {
+  final DatabaseReference _database = FirebaseDatabase.instance.ref('Pharmacy');
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("test"),
+      appBar: AppBar(
+        title: Text('Firebase Example'),
       ),
       body: Center(
-        child: Column(
-          children: 
-          List.generate(users.length, (index) => Text("${users[index]["user"]}"))
-          ),
+        child: ElevatedButton(
+          onPressed: () {
+            // สร้างอาเรย์ข้อมูล
+            var dataArray = [1, 2, 3, 4, 5];
+
+            // เพิ่มข้อมูลลงใน Firebase Realtime Database
+            _database.child('Pharmacy').set(dataArray);
+          },
+          child: Text('เพิ่มข้อมูลอาเรย์ลงใน Firebase'),
         ),
+      ),
     );
-    
- 
   }
 }
-
-
-

@@ -430,7 +430,7 @@ void writefirebase(ProviderSer provider) async {
     "Name": Name,
     "Tel": Tel,
   });
-  provider.setemail(Email);
+  // provider.setemail(Email,rendomString);
   provider.uploadImages();
   provider.createcol(Email);
 }
