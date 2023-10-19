@@ -42,7 +42,7 @@ class _CartScreenState extends State<CartScreen> {
                 final product = cartProvider.products[index];
                 return ListTile(
                   leading: Image.network(product.image),
-                  title: Text(product.nameDrug),
+                  title: Text(product.name),
                   subtitle: Text('${product.price} บาท x ${product.quantity} ชุด'),
                   trailing: IconButton(
                     icon: const Icon(Icons.delete),

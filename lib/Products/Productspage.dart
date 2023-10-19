@@ -44,7 +44,7 @@ class _ProductsPageState extends State<ProductsPage> {
           final product = products[index];
           return ListTile(
             leading: Image.network(product.image),
-            title: Text(product.nameDrug),
+            title: Text(product.name),
             subtitle: Text('${product.price.toStringAsFixed(2)}'),
             onTap: () {
               Navigator.push(

@@ -1,14 +1,14 @@
-import 'package:app_pharmacy/first_page.dart';
-import 'package:app_pharmacy/profile/profile_page.dart';
-import 'package:app_pharmacy/login/singup_screen.dart';
+
+
 import 'package:app_pharmacy/widgets/bottonhome.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 
 import '../Products/Productspage.dart';
-import '../Role_pharmacy/shopprofile.dart';
-import '../login/login_screen.dart';
+
+import '../chat/chatdm.dart';
+
 import '../map/map.dart';
 
 class HomePage extends StatefulWidget {
@@ -47,7 +47,7 @@ class _HomePageState extends State<HomePage> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 Bottonhome(title: "คลังยา",page: ProductsPage(),icon: Icons.store),
-                Bottonhome(title: "ประวัติสนทนา",page: LoginScreen(),icon: Icons.chat),
+                Bottonhome(title: "ประวัติสนทนา",page: chatdm(),icon: Icons.chat),
               ],
             ),
           ],

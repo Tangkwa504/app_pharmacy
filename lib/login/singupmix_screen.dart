@@ -242,7 +242,7 @@ class _singupmix2State extends State<singupmix2> {
   TextEditingController UserTel = TextEditingController();
   
   
-  SingingCharacter? _character = SingingCharacter.user; //เรียกใช้ enum
+  // SingingCharacter? _character = SingingCharacter.user; //เรียกใช้ enum
 
   @override
   void initState() {

@@ -125,6 +125,21 @@ class ProviderSer extends ChangeNotifier {
     }
     return null;
   }
+  Future<String?> getProfilechatImageUrl(String email) async {
+    try {
+      final ref = store.ref('users/$email/image');
+      final result = await ref.listAll();
+      if (result.items.isNotEmpty) {
+        final url = await result.items.first.getDownloadURL();
+        print(url);
+        return url;
+      }
+      return null;
+    } catch (e) {
+      print('Error getting profile image URL: $e');
+    }
+    return null;
+  }
   Future<String?> getProfileshopImageUrl(String email) async {
     try {
       final ref = store.ref('users/$email/imageshop');
@@ -274,7 +289,7 @@ class CartProvider extends ChangeNotifier {
       0, (total, product) => total + product.price * product.quantity);
 
   void addProduct(Product product, String email) async {
-    final index = _products.indexWhere((p) => p.nameDrug == product.nameDrug);
+    final index = _products.indexWhere((p) => p.name == product.name);
     final cartRef = fireStore.collection('carts').doc(email);
     if (index != -1) {
       _products[index].quantity += product.quantity;
@@ -305,7 +320,7 @@ class CartProvider extends ChangeNotifier {
   }
 
   void removeProduct(Product product, String email) async {
-    _products.removeWhere((p) => p.nameDrug == product.nameDrug);
+    _products.removeWhere((p) => p.name == product.name);
     final cartRef = fireStore.collection('carts').doc(email);
     await cartRef.update({
       'products': FieldValue.arrayRemove([product.toJson()])

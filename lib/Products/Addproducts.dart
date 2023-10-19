@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_rounded_date_picker/flutter_rounded_date_picker.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -27,8 +26,7 @@ class _AddproductState extends State<Addproduct> {
   double? price;
   int? quantity;
   final date = TextEditingController();
-  final enddate = TextEditingController();
-  String? dayremain;
+
 
   void _pickImage() async {
     final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
@@ -56,7 +54,7 @@ class _AddproductState extends State<Addproduct> {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
       final downloadUrl = await productProvider.uploadProfileImage(_image!,productService.reademail);
-      final product = Product(nameDrug: name!, image: downloadUrl, price: price!,quantity: quantity!,startdate: date.text,enddate: enddate.text,dayremain: dayremain!);
+      final product = Product(name: name!, image: downloadUrl, price: price!,quantity: quantity!,date: date.text);
       productProvider.addProduct(product,productService.reademail);
 
       Navigator.pop(context);

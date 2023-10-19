@@ -1,4 +1,4 @@
-import 'dart:developer';
+
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -23,7 +23,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.product.nameDrug),
+        title: Text(widget.product.name),
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -35,7 +35,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  widget.product.nameDrug,
+                  widget.product.name,
                   style: const TextStyle(fontSize: 24),
                 ),
                 const SizedBox(height: 16),

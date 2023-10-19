@@ -296,8 +296,7 @@ class _singupmix2State extends State<singupmix2> {
 
   @override
   Widget build(BuildContext context) {
-    ProviderSer profileService =
-        Provider.of<ProviderSer>(context, listen: true);
+    
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(

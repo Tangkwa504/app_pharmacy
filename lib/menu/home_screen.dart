@@ -1,13 +1,12 @@
-import 'package:app_pharmacy/login/singupmix_screen.dart';
-import 'package:app_pharmacy/profile/profile.dart';
+
 import 'package:flutter/material.dart';
 
 import '../Products/Cart.dart';
-import '../Shoppingcart.dart';
+
 import '../chat/chat.dart';
-import '../firebase.dart';
+
 import 'home_page.dart';
-import '../map/map.dart';
+
 import '../profile/profile_page.dart';
 
 class HomeScreen extends StatefulWidget {
