@@ -1,3 +1,5 @@
+// import 'dart:async';
+
 // import 'package:app_pharmacy/chat/chat.dart';
 // import 'package:firebase_database/firebase_database.dart';
 // import 'package:flutter/material.dart';
@@ -18,114 +20,108 @@
 //     List<String> chatKeys = [];
 //     List msg = [];
 //     List<DirectMessage> dmList = [];
+//     late DatabaseReference chatRef ;
+//     late StreamSubscription<DatabaseEvent> subscription ;
 
 
-
-//   // List<DirectMessage> dmList = [
-//   //   DirectMessage(
-//   //     userId: 'user2',
-//   //     username: 'User 2',
-//   //     senderId: 'test',
-//   //     userImage:
-//   //         'https://i.natgeofe.com/n/548467d8-c5f1-4551-9f58-6817a8d2c45e/NationalGeographic_2572187_square.jpg',
-//   //   ),
-//   //   // เพิ่มรายชื่อ DMs ตามต้องการ
-//   // ];
 //    @override
-//  void didChangeDependencies() {
-//   ProviderSer profileService = Provider.of<ProviderSer>(context, listen: true);
-//   DatabaseReference chatRef = FirebaseDatabase.instance.ref('Pharmacy/${profileService.readid}/chat');
+//    void initState() {
+//     Start();
+//     // TODO: implement initState
+//     super.initState();
+//   }
+//  void Start() {
+  
+//   ProviderSer profileService = Provider.of<ProviderSer>(context, listen: false);
+//   chatRef = FirebaseDatabase.instance.ref('Pharmacy/${profileService.readid}/chat');
 //   sender = profileService.readid;
-//   chatRef.onValue.listen((DatabaseEvent event) {
+//   print("sender=== $sender");
+//   subscription = chatRef.onValue.listen((DatabaseEvent event) {
 //     if (event.snapshot.exists) {
 //       Map<dynamic, dynamic> data = (event.snapshot.value ?? {}) as Map<dynamic, dynamic>;
-      
+//       print("data === $data");
 //       List<String> receiverList = data.keys.toList().cast<String>(); // แปลงคีย์ใน Map ให้เป็น List
       
 //       // ตรวจสอบว่ารายการไม่ว่าง
 //       if (receiverList.isNotEmpty) {
 //         print("receiverList = $receiverList");
 //         ondmcreated(receiverList);
+ 
 //       }
 
 //     }
     
 //   });
-//   super.didChangeDependencies();
+  
 // }
 
 //   void ondmcreated(receiverList){
-//     DatabaseReference starCountRef = FirebaseDatabase.instance.ref('User');
+//     ProviderSer profileService = Provider.of<ProviderSer>(context, listen: false);
+//     String receiverchack = receiverList;
+//     sender = profileService.readid;
+//     DatabaseReference starCountRef = FirebaseDatabase.instance.ref('User/$receiverchack');
 //   starCountRef.onValue.listen((DatabaseEvent event) {
 //   if (event.snapshot.exists) {
 //     Map<dynamic, dynamic> data = (event.snapshot.value ?? {}) as Map<dynamic, dynamic>;
 //     data.forEach((key, value) async {
 //       String dmEmail = value['Email'];
+
 //       String dmId = value['Id'];
 //       String dmusername  = value['Name'];
 //       ProviderSer profileService =
 //         Provider.of<ProviderSer>(context, listen: false);
-//         String? url = await profileService.getProfileshopImageUrl(dmEmail);
+//         String? url = await profileService.getProfilechatImageUrl(dmEmail);
 
-//       createdm(dmId,dmEmail,dmusername,url);
-//       print('Added marker with id=$dmId, dmEmail=$dmEmail, dmusername=$dmusername');
+//       createdm(dmId,dmEmail,dmusername,sender,url);
+//       print('Added marker with id=$dmId, dmEmail=$dmEmail, dmusername=$dmusername, Pic=$url,Sender =$sender');
 //       //getroom(receiverList);
 //   });
 //     }
 //   });
 // }
-//   void createdm(String id,String email,String name,String? url){
+//   void createdm(String id,String email,String name,String sender,String? url){
 //     List<DirectMessage> dmcreate = [
 //     DirectMessage(
 //       userId: id,
+//       receiverId:email,
 //       username: name,
-//       senderId: email,
+//       senderId: sender,
 //       userImage: url ?? 'https://i.natgeofe.com/n/548467d8-c5f1-4551-9f58-6817a8d2c45e/NationalGeographic_2572187_square.jpg',
 //     ),
 //     // เพิ่มรายชื่อ DMs ตามต้องการ
 //   ];
-//   dmList.addAll(dmcreate);
+//     setState(() {
+//     dmList.addAll(dmcreate);
+//     });
+
 //   print("dmlist === ${dmList}");
 //   }
 
-// void getroom(receiverList) {
-//   ProviderSer profileService = Provider.of<ProviderSer>(context, listen: true);
-//     DatabaseReference starCountRef =
-//         FirebaseDatabase.instance.ref('Pharmacy/${profileService.readid}/chat/${receiverList}');
-//     starCountRef.onValue.listen((DatabaseEvent event) {
-//       print(event.snapshot.value);
-//       String checkroom = "${event.snapshot.value.toString()}";
-//       if(checkroom == "null"){
+// // void getroom(receiverList) {
+// //   ProviderSer profileService = Provider.of<ProviderSer>(context, listen: true);
+// //     DatabaseReference starCountRef =
+// //         FirebaseDatabase.instance.ref('Pharmacy/${profileService.readid}/chat/${receiverList}');
+// //     starCountRef.onValue.listen((DatabaseEvent event) {
+// //       print(event.snapshot.value);
+// //       String checkroom = "${event.snapshot.value.toString()}";
+// //       if(checkroom == "null"){
         
-//       }else{
-//       room = event.snapshot.value.toString();
+// //       }else{
+// //       room = event.snapshot.value.toString();
 
-//       getmsg();
-//       }
-//     });
+  
+// //       }
+// //     });
+// //   }
+
+// @override
+//   void dispose() {
+//     // subscription.cancel();
+
+//     // TODO: implement dispose
+//     super.dispose();
 //   }
 
-//   void getmsg() {
-//     DatabaseReference starCountRef = FirebaseDatabase.instance.ref('chatroom/$room/message');
-//     starCountRef.onValue.listen((DatabaseEvent event) {
-//       print("event getmsg"+"${event.snapshot.value}");
-//       msg = event.snapshot.value as List;
-//       print("List ${msg}");
-//       setState(() {});
-//     });
-//   }
-
-//   // void sendMesg() async {
-//   //   DatabaseReference ref = FirebaseDatabase.instance.ref("chatroom/$room/message/${msg.length}");
-
-//   //   await ref.set({
-//   //     "msg": messageController.text,
-//   //     "sender": widget.senderId,
-//   //     "receiver": widget.receiverId,
-//   //     "time": 1694937735,
-//   //   });
-//   //   messageController.clear();
-//   // }
 
 //   @override
 //   Widget build(BuildContext context) {
@@ -155,7 +151,7 @@
 //               backgroundImage: NetworkImage(dm.userImage),
 //             ),
 //             title: Text(dm.username),
-//             subtitle: Text("dm.lastMessage"),
+//             subtitle: Text("dm.senderId"),
 //             trailing: Text("dm.lastMessageTime"),
 //           );
 //         },
@@ -171,11 +167,13 @@
 //   final String username;
 //   final String userImage;
 //   final String senderId;
+//   final String receiverId;
 
 //   DirectMessage({
 //     required this.userId,
 //     required this.username,
 //     required this.userImage,
 //     required this.senderId,
+//     required this.receiverId,
 //   });
 // }

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:app_pharmacy/chat/chat.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -18,53 +20,67 @@ class _chatdmState extends State<chatdm> {
     List<String> chatKeys = [];
     List msg = [];
     List<DirectMessage> dmList = [];
+    late DatabaseReference chatRef ;
+    late StreamSubscription<DatabaseEvent> subscription ;
 
 
    @override
- void didChangeDependencies() {
-  ProviderSer profileService = Provider.of<ProviderSer>(context, listen: true);
-  DatabaseReference chatRef = FirebaseDatabase.instance.ref('Pharmacy/${profileService.readid}/chat');
+   void initState() {
+    Start();
+    // TODO: implement initState
+    super.initState();
+  }
+ void Start() {
+  
+  ProviderSer profileService = Provider.of<ProviderSer>(context, listen: false);
+  chatRef = FirebaseDatabase.instance.ref('Pharmacy/${profileService.readid}/chat');
   sender = profileService.readid;
-  chatRef.onValue.listen((DatabaseEvent event) {
+  print("sender=== $sender");
+  subscription = chatRef.onValue.listen((DatabaseEvent event) {
     if (event.snapshot.exists) {
       Map<dynamic, dynamic> data = (event.snapshot.value ?? {}) as Map<dynamic, dynamic>;
-      
+      print("data === $data");
       List<String> receiverList = data.keys.toList().cast<String>(); // แปลงคีย์ใน Map ให้เป็น List
       
       // ตรวจสอบว่ารายการไม่ว่าง
       if (receiverList.isNotEmpty) {
         print("receiverList = $receiverList");
         ondmcreated(receiverList);
+ 
       }
 
     }
     
   });
-  super.didChangeDependencies();
+  
 }
 
-  void ondmcreated(receiverList){
-    ProviderSer profileService = Provider.of<ProviderSer>(context, listen: false);
-    sender = profileService.readid;
-    DatabaseReference starCountRef = FirebaseDatabase.instance.ref('User');
-  starCountRef.onValue.listen((DatabaseEvent event) {
-  if (event.snapshot.exists) {
-    Map<dynamic, dynamic> data = (event.snapshot.value ?? {}) as Map<dynamic, dynamic>;
-    data.forEach((key, value) async {
-      String dmEmail = value['Email'];
+  Future<void> ondmcreated(List<String> receiverList) async {
+  ProviderSer profileService = Provider.of<ProviderSer>(context, listen: false);
+  sender = profileService.readid;
 
-      String dmId = value['Id'];
-      String dmusername  = value['Name'];
-      ProviderSer profileService =
-        Provider.of<ProviderSer>(context, listen: false);
+  for (String receiver in receiverList) {
+    String receiverPath = 'User/$receiver';
+    DatabaseReference starCountRef = FirebaseDatabase.instance.ref(receiverPath);
+
+    try {
+      DatabaseEvent event = await starCountRef.once();
+      if (event.snapshot.exists) {
+        Map<dynamic, dynamic> data = (event.snapshot.value ?? {}) as Map<dynamic, dynamic>;
+
+        String dmEmail = data['Email'];
+        String dmId = data['Id'];
+        String dmusername = data['Name'];
         String? url = await profileService.getProfilechatImageUrl(dmEmail);
 
-      createdm(dmId,dmEmail,dmusername,sender,url);
-      print('Added marker with id=$dmId, dmEmail=$dmEmail, dmusername=$dmusername, Pic=$url,Sender =$sender');
-      //getroom(receiverList);
-  });
+        createdm(dmId, dmEmail, dmusername, sender, url);
+        print('Added marker with id=$dmId, dmEmail=$dmEmail, dmusername=$dmusername, Pic=$url, Sender=$sender');
+      }
+    } catch (error) {
+      // Handle any errors that might occur during the data retrieval.
+      print('Error: $error');
     }
-  });
+  }
 }
   void createdm(String id,String email,String name,String sender,String? url){
     List<DirectMessage> dmcreate = [
@@ -100,6 +116,14 @@ class _chatdmState extends State<chatdm> {
 //       }
 //     });
 //   }
+
+@override
+  void dispose() {
+    // subscription.cancel();
+
+    // TODO: implement dispose
+    super.dispose();
+  }
 
 
   @override
