@@ -1,5 +1,6 @@
 
 
+import 'package:app_pharmacy/Products/Cartchack.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -9,8 +10,12 @@ import 'Cart.dart';
 
 class ProductDetailsScreen extends StatefulWidget {
   final Product product;
+  final String email;
 
-  ProductDetailsScreen({required this.product});
+  ProductDetailsScreen({
+    required this.product,
+    required this.email,
+    });
 
   @override
   _ProductDetailsScreenState createState() => _ProductDetailsScreenState();
@@ -23,7 +28,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.product.name),
+        title: Text(widget.product.namedrug),
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -35,7 +40,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  widget.product.name,
+                  widget.product.namedrug,
                   style: const TextStyle(fontSize: 24),
                 ),
                 const SizedBox(height: 16),
@@ -75,15 +80,17 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
           ElevatedButton(
             onPressed: () {
               // Add product to cart
-               final cartProvider =
-                   Provider.of<CartProvider>(context, listen: false);
+               final orderprovider =
+                   Provider.of<Orderprovider>(context, listen: false);
                    final seviceProvider =
                    Provider.of<ProviderSer>(context, listen: false);
                final product = widget.product.copyWith(quantity: quantity);
-               cartProvider.addProduct(product,seviceProvider.reademail);
+               orderprovider.addProduct(product,widget.email);
 
               // Navigate to the cart screen
-              Navigator.push(context, MaterialPageRoute(builder: ((context) => CartScreen()))); 
+              Navigator.push(context, MaterialPageRoute(builder: ((context) => CartScreenchack(
+                email: widget.email,
+              )))); 
 
             },
             child: Text('Add to Cart'),

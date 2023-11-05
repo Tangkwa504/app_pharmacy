@@ -1,12 +1,16 @@
+// import 'dart:io';
 
 // import 'package:firebase_database/firebase_database.dart';
 // import 'package:flutter/material.dart';
-
-// import 'package:socket_io_client/socket_io_client.dart' as IO;
+// import 'package:intl/date_symbol_data_local.dart';
+// import 'package:intl/intl.dart';
+// import 'package:firebase_storage/firebase_storage.dart';
+// import 'package:image_picker/image_picker.dart';
+// import 'package:provider/provider.dart';
+// import 'package:uuid/uuid.dart';
 
 // import '../model/chat.dart';
-
-
+// import '../widgets/Service.dart';
 
 // class ChatScreen extends StatefulWidget {
 //   final String receiverId;
@@ -27,9 +31,9 @@
 // }
 
 // class _ChatScreenState extends State<ChatScreen> {
-//   late IO.Socket socket;
-
-
+//   List<File> imgfile = [];
+//   List<String> imgurl = [];
+//   int uploadProgress = 0;
 
 //   bool showDate = false;
 //   TextEditingController messageController = TextEditingController();
@@ -47,84 +51,113 @@
 //     sender = widget.senderId;
 //     receiver = widget.receiverId;
 //     getroom();
-//     print("widget.receiverId === " + widget.receiverId);
-//     print("widget.senderId === " + widget.senderId);
+
+//     // Initialize date formatting for Thai locale
+//     initializeDateFormatting('th_TH', null).then((_) {
+//       // Continue with your code here
+//     });
 
 //     super.initState();
 //   }
- 
-//   void createroom(){
-//       String pathuser = "User/${widget.senderId}/chat";
-//       String pathpharmacy ="Pharmacy/${widget.receiverId}/chat";
-//       String userrequest ="Pharmacy/${widget.receiverId}/userrequest";
-//       int currentTimeMillis = DateTime.now().millisecondsSinceEpoch;
-//       DatabaseReference refuser = FirebaseDatabase.instance.ref(pathuser);
-//       DatabaseReference refpharmacy = FirebaseDatabase.instance.ref(pathpharmacy);
-//       DatabaseReference refuserrequest = FirebaseDatabase.instance.ref(userrequest);
-//       String newroom ="room"+"${widget.senderId}"+"-&-"+"${widget.receiverId}";
-//       DatabaseReference createdroom = FirebaseDatabase.instance.ref("chatroom/$newroom/message/${msg.length}");
-//       createdroom.set({
-//       "msg": "นี่คือข้อความอัตโนมัติจากร้าน "+widget.chatName,
-//       "sender": widget.receiverId,
-//       "receiver": widget.senderId,
-//       "time": currentTimeMillis,
-//     });
-//       refuser.update({
-//         "$receiver": newroom ,
 
-//       });
-//       refpharmacy.update({
-//         "$sender": newroom ,
-
-//       });
-//       refuserrequest.update({
-//         "userrequestid": "$sender" ,
-
-//       });
-       
-      
-//      room = newroom;
-//      setState(() {});
-//      getroom();
-
-//   }
 //   void getroom() {
-//     DatabaseReference starCountRef =
-//         FirebaseDatabase.instance.ref('User/${widget.senderId}/chat/${widget.receiverId}');
+//     DatabaseReference starCountRef = FirebaseDatabase.instance.ref('Pharmacy/${widget.senderId}/chat/${widget.receiverId}');
 //     starCountRef.onValue.listen((DatabaseEvent event) {
 //       print(event.snapshot.value);
 //       String checkroom = "${event.snapshot.value.toString()}";
-//       if(checkroom == "null"){
-//         createroom();
-//       }else{
-//       room = event.snapshot.value.toString();
-
-//       getmsg();
+//       if (checkroom == "null") {
+//         //createroom();
+//       } else {
+//         room = event.snapshot.value.toString();
+//         getmsg();
 //       }
 //     });
 //   }
-  
 
 //   void getmsg() {
 //     DatabaseReference starCountRef = FirebaseDatabase.instance.ref('chatroom/$room/message');
 //     starCountRef.onValue.listen((DatabaseEvent event) {
-//       print("event getmsg"+"${event.snapshot.value}");
+//       print("event getmsg" + "${event.snapshot.value}");
 //       msg = event.snapshot.value as List;
 //       print("List ${msg}");
-//       setState(() {});
+//       setState(() {
+//         // Sort the messages by time
+//         msg.sort((a, b) {
+//           int timeA = a['time'];
+//           int timeB = b['time'];
+//           return timeA.compareTo(timeB);
+//         });
+//       });
 //     });
 //   }
 
 //   void sendMesg() async {
 //     DatabaseReference ref = FirebaseDatabase.instance.ref("chatroom/$room/message/${msg.length}");
+//     int currentTimeMillis = DateTime.now().millisecondsSinceEpoch;
+//     String messageText = messageController.text;
 
-//     await ref.set({
-//       "msg": messageController.text,
-//       "sender": widget.senderId,
-//       "receiver": widget.receiverId,
-//       "time": 1694937735,
-//     });
+//     if (messageText.isNotEmpty || imgurl.isNotEmpty) {
+//       // Add URLs to the message
+//       messageController.text += imgurl.join("\n");
+
+//       await ref.set({
+//         "msg": messageText,
+//         "sender": widget.senderId,
+//         "receiver": widget.receiverId,
+//         "time": currentTimeMillis,
+//       });
+//     }
+
 //     messageController.clear();
+//   }
+
+//   void _pickImage() async {
+//     final ImagePicker _picker = ImagePicker();
+//     final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+//     if (image != null) {
+//       imgfile.add(File(image.path));
+//       await uploadImagesInChat();
+//     }
+//   }
+
+//   Future<void> uploadImagesInChat() async {
+//     if (imgfile.isEmpty) {
+//       return;
+//     }
+
+    
+//     ProviderSer profileService = Provider.of<ProviderSer>(context, listen: false);
+//     String senderemail = profileService.reademail;
+
+//     try {
+//       for (int i = 0; i < imgfile.length; i++) {
+//         String imageName = const Uuid().v4();
+//         final Reference storageRef = FirebaseStorage.instance.ref('users/$senderemail/imageinchat/$imageName');
+//         final UploadTask uploadTask = storageRef.putFile(imgfile[i]);
+
+//         uploadTask.snapshotEvents.listen((TaskSnapshot event) {
+//           uploadProgress = ((event.bytesTransferred / event.totalBytes) * 100).toInt();
+//           setState(() {});
+//         });
+
+//         final TaskSnapshot downloadUrl = await uploadTask.whenComplete(() {
+//           print("Upload for $senderemail with Image $imageName");
+//         });
+
+//         final String url = await downloadUrl.ref.getDownloadURL();
+//         imgurl.add(url);
+
+//         // Add URLs to messageController.text
+//         messageController.text += url + '\n';
+//       }
+//     } catch (e) {
+//       print(e);
+//       rethrow;
+//     } finally {
+//       imgfile.clear();
+//       uploadProgress = 0;
+//       setState(() {});
+//     }
 //   }
 
 //   @override
@@ -138,9 +171,7 @@
 //           },
 //         ),
 //         flexibleSpace: Container(
-//           decoration: const BoxDecoration(
-
-//           ),
+//           decoration: const BoxDecoration(),
 //         ),
 //         title: Row(
 //           children: [
@@ -159,28 +190,25 @@
 //                 ),
 //               ),
 //             ] else ...[
-
+//               const SizedBox(
+//                 width: 15,
+//               ),
+//               Text(
+//                 ' ${widget.chatName}',
+//                 overflow: TextOverflow.ellipsis,
+//                 maxLines: 1,
+//               ),
 //             ],
-//             const SizedBox(
-//               width: 15,
-//             ),
-//             Text(
-//               ' ${widget.chatName}',
-//               overflow: TextOverflow.ellipsis,
-//               maxLines: 1,
-//             ),
 //           ],
 //         ),
 //         actions: <Widget>[
-//     IconButton(
-//       icon: Icon(Icons.add_shopping_cart), // แทนด้วยไอคอนของตะกร้า add_shopping_cart ไอคอนตะกร้าแอด
-//       onPressed: () {
-//         // ตอนที่ปุ่มถูกคลิก
-//         // เพิ่มโค้ดที่คุณต้องการให้มันทำอะไรเมื่อปุ่มถูกคลิกที่นี่
-//       },
-//     ),
-//   ],
-  
+//           IconButton(
+//             icon: Icon(Icons.add_shopping_cart),
+//             onPressed: () {
+//               // Handle button click here
+//             },
+//           ),
+//         ],
 //       ),
 //       body: SafeArea(
 //         child: Container(
@@ -188,30 +216,60 @@
 //             children: [
 //               Expanded(
 //                 child: ListView.builder(
-//                     //reverse: true,
 //                   itemCount: msg.length,
 //                   itemBuilder: (context, index) {
+//                     int messageTimeMillis = msg[index]['time'];
+//                     DateTime messageTime = DateTime.fromMillisecondsSinceEpoch(messageTimeMillis);
+//                     String formattedTime = DateFormat('HH:mm').format(messageTime);
+//                     String formattedDate = DateFormat('dd/MM/yyyy').format(messageTime);
+
+//                     String previousDate = '';
+//                     if (index > 0) {
+//                       int previousMessageTimeMillis = msg[index - 1]['time'];
+//                       DateTime previousMessageTime = DateTime.fromMillisecondsSinceEpoch(previousMessageTimeMillis);
+//                       previousDate = DateFormat('dd/MM/yyyy').format(previousMessageTime);
+//                     }
+
 //                     return Padding(
 //                       padding: const EdgeInsets.all(8.0),
-//                       child: Row(
-//                         mainAxisAlignment: msg[index]['sender'] == sender
-//                             ? MainAxisAlignment.end
-//                             : MainAxisAlignment.start,
+//                       child: Column(
+//                         crossAxisAlignment: msg[index]['sender'] == sender
+//                             ? CrossAxisAlignment.end
+//                             : CrossAxisAlignment.start,
 //                         children: [
-//                           Container(
-//                             decoration: BoxDecoration(
-//                               color: msg[index]['sender'] == sender
-//                                      ? Colors.blue
-//                                      : Colors.grey, // แก้ไขสีพื้นหลังตรงนี้
-//                               borderRadius: BorderRadiusDirectional.circular(16),
-//                             ),
-//                             child: Padding(
-//                               padding: const EdgeInsets.all(8.0),
+//                           if (formattedDate != previousDate) ...[
+//                             Center(
 //                               child: Text(
-//                                 "${msg[index]['msg']}",
-//                                 style: TextStyle(fontSize: 20, color: Colors.white),
+//                                 formattedDate,
+//                                 style: TextStyle(fontSize: 14, color: Colors.grey),
 //                               ),
 //                             ),
+//                           ],
+//                           if (msg[index]['msg'].contains("http")) ...[
+//                             // Display image
+//                             Image.network(
+//                               msg[index]['msg'],
+//                               width: 200, // Adjust the size as needed
+//                               height: 200, // Adjust the size as needed
+//                             ),
+//                           ] else ...[
+//                             Container(
+//                               decoration: BoxDecoration(
+//                                 color: msg[index]['sender'] == sender ? Colors.blue : Colors.grey,
+//                                 borderRadius: BorderRadius.circular(16),
+//                               ),
+//                               child: Padding(
+//                                 padding: const EdgeInsets.all(8.0),
+//                                 child: Text(
+//                                   "${msg[index]['msg']}",
+//                                   style: TextStyle(fontSize: 20, color: Colors.white),
+//                                 ),
+//                               ),
+//                             ),
+//                           ],
+//                           Text(
+//                             formattedTime,
+//                             style: TextStyle(fontSize: 12, color: Colors.grey),
 //                           ),
 //                         ],
 //                       ),
@@ -236,6 +294,12 @@
 //                         sendMesg();
 //                       },
 //                       icon: const Icon(Icons.send),
+//                     ),
+//                     IconButton(
+//                       onPressed: () {
+//                         _pickImage();
+//                       },
+//                       icon: const Icon(Icons.image),
 //                     ),
 //                   ],
 //                 ),

@@ -8,17 +8,23 @@ import '../widgets/Service.dart';
 import 'Addproducts.dart';
 import 'ProductDetails.dart';
 
-class ProductsPage extends StatefulWidget {
-
-  const ProductsPage({
-
+class ProductsPagechat extends StatefulWidget {
+  final String receiverId;
+  final String chatName;
+  final String senderId;
+  final String email;
+  const ProductsPagechat({
+    required this.receiverId,
+    required this.senderId,
+    required this.chatName,
+    required this.email,
     super.key});
 
   @override
-  State<ProductsPage> createState() => _ProductsPageState();
+  State<ProductsPagechat> createState() => _ProductsPagechatState();
 }
 
-class _ProductsPageState extends State<ProductsPage> {
+class _ProductsPagechatState extends State<ProductsPagechat> {
   @override
   void initState() {
     initproduct();
@@ -50,14 +56,15 @@ class _ProductsPageState extends State<ProductsPage> {
             title: Text(product.namedrug),
             subtitle: Text('${product.price.toStringAsFixed(2)}'),
             onTap: () {
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(
-              //     builder: (context) => ProductDetailsScreen(
-              //       product: product
-              //     ),
-              //   ),
-              // );
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ProductDetailsScreen(
+                    product: product,
+                    email: widget.email,
+                  ),
+                ),
+              );
             },
           );
         },

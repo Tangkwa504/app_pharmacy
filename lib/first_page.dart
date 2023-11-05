@@ -71,7 +71,7 @@ class _FirstPageState extends State<FirstPage> {
               ),
               ),
               const Text(
-                  "Online" ,
+                  "Shop" ,
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 44,

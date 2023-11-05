@@ -9,6 +9,7 @@ import '../Products/Productspage.dart';
 
 import '../chat/chatdm.dart';
 
+import '../chat/chatrequest.dart';
 import '../map/map.dart';
 
 class HomePage extends StatefulWidget {
@@ -39,7 +40,7 @@ class _HomePageState extends State<HomePage> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 Bottonhome(title: "ค้นหาอัตโนมัติ",page: MapsPage(lat:"",long:"",opennow: true,),icon: Icons.refresh),
-                Bottonhome(title: "ค้นหาร้านยา",page: MapsPage(lat:"",long:"",opennow: false,),icon: Icons.pin_drop),
+                Bottonhome(title: "คำขอปรึกษา",page: chatdmrequest(),icon: Icons.group_add),
               ],
             ),
             const SizedBox(height: 12),

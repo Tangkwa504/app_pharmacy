@@ -55,29 +55,32 @@
   
 // }
 
-//   void ondmcreated(receiverList){
-//     ProviderSer profileService = Provider.of<ProviderSer>(context, listen: false);
-//     String receiverchack = receiverList;
-//     sender = profileService.readid;
-//     DatabaseReference starCountRef = FirebaseDatabase.instance.ref('User/$receiverchack');
-//   starCountRef.onValue.listen((DatabaseEvent event) {
-//   if (event.snapshot.exists) {
-//     Map<dynamic, dynamic> data = (event.snapshot.value ?? {}) as Map<dynamic, dynamic>;
-//     data.forEach((key, value) async {
-//       String dmEmail = value['Email'];
+//   Future<void> ondmcreated(List<String> receiverList) async {
+//   ProviderSer profileService = Provider.of<ProviderSer>(context, listen: false);
+//   sender = profileService.readid;
 
-//       String dmId = value['Id'];
-//       String dmusername  = value['Name'];
-//       ProviderSer profileService =
-//         Provider.of<ProviderSer>(context, listen: false);
+//   for (String receiver in receiverList) {
+//     String receiverPath = 'User/$receiver';
+//     DatabaseReference starCountRef = FirebaseDatabase.instance.ref(receiverPath);
+
+//     try {
+//       DatabaseEvent event = await starCountRef.once();
+//       if (event.snapshot.exists) {
+//         Map<dynamic, dynamic> data = (event.snapshot.value ?? {}) as Map<dynamic, dynamic>;
+
+//         String dmEmail = data['Email'];
+//         String dmId = data['Id'];
+//         String dmusername = data['Name'];
 //         String? url = await profileService.getProfilechatImageUrl(dmEmail);
 
-//       createdm(dmId,dmEmail,dmusername,sender,url);
-//       print('Added marker with id=$dmId, dmEmail=$dmEmail, dmusername=$dmusername, Pic=$url,Sender =$sender');
-//       //getroom(receiverList);
-//   });
+//         createdm(dmId, dmEmail, dmusername, sender, url);
+//         print('Added marker with id=$dmId, dmEmail=$dmEmail, dmusername=$dmusername, Pic=$url, Sender=$sender');
+//       }
+//     } catch (error) {
+//       // Handle any errors that might occur during the data retrieval.
+//       print('Error: $error');
 //     }
-//   });
+//   }
 // }
 //   void createdm(String id,String email,String name,String sender,String? url){
 //     List<DirectMessage> dmcreate = [

@@ -28,7 +28,7 @@ class _HomeScreenState
 
 
 
-      ChatScreen(chatName: 'test', image: 'test', receiverId: 'tktk', senderId:email ,),
+      ChatScreen(chatName: 'test', image: 'test', receiverId: 'tktk', senderId:email ,email: "email",),
       CartScreen(),
       ProfilePage(id:email),
     ];

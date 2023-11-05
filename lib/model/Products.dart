@@ -1,52 +1,64 @@
 class Product {
-  final String name;
+  final String namedrug;
   final String image;
   final double price;
-  final String date;
+  //final String enddate;
   int quantity;
   
+  //namedrug
+  //
 
   Product({
-    required this.name,
+    required this.namedrug,
     required this.image,
     required this.price,
-    required this.date,
+    //required this.enddate,
     required this.quantity,
   });
 
+   Map<String, dynamic> toMap() {
+    return {
+      'namedrug': namedrug,
+      'image': image,
+      'price': price,
+      'quantity': quantity,
+      //'enddate': enddate,
+    };
+  }
+
   Product copyWith({
-    String? name,
+    String? namedrug,
     String? image,
     double? price,
     int? quantity,
-    String? date,
+    //String? date,
   }) {
     return Product(
-      name: name ?? this.name,
+      namedrug: namedrug ?? this.namedrug,
       image: image ?? this.image,
       price: price ?? this.price,
       quantity: quantity ?? this.quantity,
-      date: date ?? this.date,
+      //enddate: enddate ?? this.enddate,
     );
   }
 
   factory Product.fromJson(Map<String, dynamic> json) {
     return Product(
-      name: json['name'],
+      namedrug: json['namedrug'],
       image: json['image'],
       price: json['price'].toDouble(),
       quantity: json['quantity'] ?? 1,
-      date: json['date'],
+      //enddate: json['enddate'],
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'name': name,
+      'namedrug': namedrug,
       'image': image,
       'price': price,
       'quantity': quantity,
-      'date': date,
+      //'date': enddate,
     };
   }
 }

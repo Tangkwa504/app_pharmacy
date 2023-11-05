@@ -1,6 +1,4 @@
-import 'dart:convert';
 
-import 'package:app_pharmacy/login/singupmix_screen.dart';
 import 'package:app_pharmacy/profile/setting_profile.dart';
 import 'package:app_pharmacy/widgets/Service.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -13,10 +11,10 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 
-import '../firebase.dart';
+
 import '../firebase_options.dart';
 import '../first_page.dart';
-import '../login/login_screen.dart';
+
 import '../widgets/alertdialog.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -224,7 +222,7 @@ class _ProfilePageState extends State<ProfilePage> {
             left: MediaQuery.of(context).size.width / 2 - 75,
             child: ClipRRect(
               borderRadius: BorderRadius.circular(75),
-              child: url != null ? Image.network(url!, height: 150,
+              child: profileService.imgbyte != null ? Image.memory(profileService.imgbyte!, height: 150,
                 width: 150, fit: BoxFit.cover,) : Image.asset(
                 "assets/profile.png",
                 height: 150,

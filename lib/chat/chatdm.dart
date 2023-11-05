@@ -89,6 +89,7 @@ class _chatdmState extends State<chatdm> {
       receiverId:email,
       username: name,
       senderId: sender,
+      email:email,
       userImage: url ?? 'https://i.natgeofe.com/n/548467d8-c5f1-4551-9f58-6817a8d2c45e/NationalGeographic_2572187_square.jpg',
     ),
     // เพิ่มรายชื่อ DMs ตามต้องการ
@@ -133,44 +134,58 @@ class _chatdmState extends State<chatdm> {
         title: Text('ประวัติการสนทนา'),
       ),
       body: ListView.builder(
-        itemCount: dmList.length,
-        itemBuilder: (context, index) {
-          final dm = dmList[index];
-          return ListTile(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ChatScreen(
-                    receiverId: dm.userId,
-                    chatName: dm.username,
-                    image: dm.userImage,
-                    senderId: dm.senderId,
-                  ),
+  itemCount: dmList.length,
+  itemBuilder: (context, index) {
+    final dm = dmList[index];
+    return Column(
+      children: <Widget>[
+        SizedBox(height: 10),
+        ListTile(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ChatScreen(
+                  receiverId: dm.userId,
+                  chatName: dm.username,
+                  image: dm.userImage,
+                  senderId: dm.senderId,
+                  email:dm.email,
                 ),
-              );
-            },
-            leading: CircleAvatar(
-              backgroundImage: NetworkImage(dm.userImage),
-            ),
-            title: Text(dm.username),
-            subtitle: Text("dm.senderId"),
+              ),
+            );
+          },
+          leading: CircleAvatar(
+            backgroundImage: NetworkImage(dm.userImage),
+          ),
+          title: Text(dm.username),
+          subtitle: Text("dm.senderId"),
             trailing: Text("dm.lastMessageTime"),
-          );
-        },
-      ),
+        ),
+        SizedBox(height: 10),
+        Container(
+          height: 1.5, // ปรับความสูงเพื่อเปลี่ยนความหนาของเส้น
+          color: Color.fromARGB(255, 131, 130, 130), // สีของเส้น
+        ), // เพิ่มเส้
+      ],
+    );
+  },
+)
+
     );
   }
 }
 
 
-
 class DirectMessage {
+  
   final String userId;
   final String username;
   final String userImage;
   final String senderId;
   final String receiverId;
+  final String email;
+
 
   DirectMessage({
     required this.userId,
@@ -178,5 +193,6 @@ class DirectMessage {
     required this.userImage,
     required this.senderId,
     required this.receiverId,
+    required this.email,
   });
 }

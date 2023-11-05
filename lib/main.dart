@@ -32,6 +32,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create:(_) => ProductProvider()),
         ChangeNotifierProvider(create:(_) => CartProvider()),
         ChangeNotifierProvider(create:(_) => Useridprovider()),
+        ChangeNotifierProvider(create:(_) => Orderprovider()),
         
       ],
       child: MaterialApp(
