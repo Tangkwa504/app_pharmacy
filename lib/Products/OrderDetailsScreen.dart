@@ -1,9 +1,10 @@
-import 'package:app_pharmacy/widgets/Service.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'dart:io';
-import 'package:image_picker/image_picker.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
+
+import '../widgets/Service.dart';
 
 class OrderDetailsScreen extends StatefulWidget {
   final String orderId;
@@ -11,8 +12,8 @@ class OrderDetailsScreen extends StatefulWidget {
   final String totalPrice;
 
   File? imageFile;
-  
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   OrderDetailsScreen({
     required this.orderId,
@@ -23,6 +24,13 @@ class OrderDetailsScreen extends StatefulWidget {
   @override
   _OrderDetailsScreenState createState() => _OrderDetailsScreenState();
 }
+int currentStep = 0;
+enum OrderStatus {
+  paymentConfirmation,
+  orderShipped,
+}
+
+OrderStatus currentStatus = OrderStatus.paymentConfirmation;
 
 class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
   Future<void> _pickImage() async {
@@ -35,39 +43,29 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
     }
   }
 
-  void saveOrderToFirestore(String orderId, double totalPrice) {
+  Future<void> saveOrderToFirestore(String orderId, double totalPrice) async {
+    FirebaseFirestore fireStore = FirebaseFirestore.instance;
     final cartProvider = Provider.of<CartProvider>(context);
-    final user = widget.email;
-    final orderData = {
+    final cartRef = fireStore.collection('carts').doc(widget.email);
+    final ordersRef = fireStore.collection('orders').doc(widget.email);
+
+    await ordersRef.set({
       'order_id': orderId,
       'total_price': totalPrice,
       'user_email': widget.email,
       'products': cartProvider.products.map((product) => product.toJson()).toList(),
-      // เพิ่มข้อมูลอื่น ๆ ที่คุณต้องการบันทึก เช่น รายการสินค้า, เวลาออเดอร์, ที่อยู่จัดส่ง, และอื่น ๆ
-    };
-
-    FirebaseFirestore.instance.collection('orders').doc(user).set(orderData).then((documentReference) {
-      // บันทึกเสร็จสิ้น
-      //print('บันทึกออเดอร์เรียบร้อย: ${documentReference.id}');
-    }).catchError((error) {
-      // เกิดข้อผิดพลาดในการบันทึก
-      print('เกิดข้อผิดพลาดในการบันทึกออเดอร์: $error');
     });
-    
   }
-  
-  
 
   @override
   Widget build(BuildContext context) {
     final cartProvider = Provider.of<CartProvider>(context);
-    
+
     return Scaffold(
       appBar: AppBar(
         title: Text('รายละเอียดออเดอร์'),
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      body: ListView(
         children: [
           Padding(
             padding: const EdgeInsets.all(16.0),
@@ -82,7 +80,6 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
           ListTile(
             title: Text('ยอดรวม: ${widget.totalPrice} บาท'),
           ),
-          
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Text(
@@ -90,22 +87,19 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
           ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: cartProvider.products.length,
-              itemBuilder: (context, index) {
-                final product = cartProvider.products[index];
-                return ListTile(
-                  leading: Image.network(product.image),
-                  title: Text(product.namedrug),
-                  subtitle: Text('${product.price} บาท x ${product.quantity} ชุด'),
-                  
-                );
-              },
-            ),
+          ListView.builder(
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+            itemCount: cartProvider.products.length,
+            itemBuilder: (context, index) {
+              final product = cartProvider.products[index];
+              return ListTile(
+                leading: Image.network(product.image),
+                title: Text(product.namedrug),
+                subtitle: Text('${product.price} บาท x ${product.quantity} ชุด'),
+              );
+            },
           ),
-          // นำข้อมูลจากหน้า carts มาแสดงตรงช่วงนี้
-
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Text(
@@ -113,70 +107,64 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              
-              Column(
-                children: [
-                  Icon(
-                    Icons.image, // รูปภาพจัดส่งสินค้า
-                    color: Colors.blue,
-                    size: 48,
-                  ),
-                  Text('รอยืนยันการชำระเงิน', style: TextStyle(color: Colors.black)),
-                ],
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  
-                },
-                style: ElevatedButton.styleFrom(primary: Colors.green),
-                child: Text('แสดงรูปภาพ'),
-              ),
-            ],
-          ),     
-              const SizedBox(height: 30),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              Column(
-                children: [
-                  widget.imageFile != null
-                      ? Image.file(
-                          widget.imageFile!,
-                          width: 100,
-                          height: 100,
-                        )
-                      : Icon(
-                          Icons.image,
-                          color: Colors.blue,
-                          size: 48,
-                        ),
-                  Text('จัดส่งสินค้า', style: TextStyle(color: Colors.black)),
-                ],
-                
-              ),
-              
-              ElevatedButton(
-                onPressed: () {
-                  _pickImage(); 
-                },
-                style: ElevatedButton.styleFrom(primary: Colors.green),
-                child: Text('เพิ่มรูปภาพ'),
-              ),
-            ],
+          Stepper(
+                    currentStep: currentStep,
+                    onStepContinue: (){
+                      if(currentStep != 3)
+                      setState(() => currentStep++);
+                    },
+                    onStepCancel: (){
+                      if(currentStep != 0)
+                      setState(() => currentStep--);
+                    },
+      steps: [
+        Step(
+          title: const Text('รอดำเนินการ'),
+          content: const Text(
+            'ได้รับออเดอร์',
           ),
-          Center(
-            child: ElevatedButton(
-              onPressed: () {
-                saveOrderToFirestore(widget.orderId, cartProvider.totalPrice);
-              },
-              style: ElevatedButton.styleFrom(primary: Colors.green),
-              child: Text('เสร็จสิ้นออเดอร์'),
-            ),
-          )
+          isActive: currentStep >= 0,
+          state: currentStep > 0
+          ? StepState.complete
+           : StepState.indexed,
+         
+        ),
+        Step(
+          title: const Text('ร้านค้าได้รับออเดอร์แล้ว'),
+          content: const Text(
+            'เตรียมจัดส่งสืนค้า',
+          ),
+          isActive: currentStep >= 1,
+          state: currentStep >= 1
+          ? StepState.complete
+           : StepState.indexed,
+        ),
+        Step(
+          title: const Text('กำลังจัดส่งสินค้า'),
+          content: const Text(
+            'ได้จัดส่งสินค้าให้กับขนส่งแล้ว',
+          ),
+          isActive: currentStep >= 2,
+          state: currentStep >= 2
+          ? StepState.complete
+           : StepState.indexed,
+        ),
+        Step(
+          title: const Text('สินค้าส่งถึงแล้ว'),
+          content: const Text(
+            'สินค้าของคุณได้ถูกจัดส่งและลงนามโดยผู้ซื้อแล้ว',
+          ),
+          isActive: currentStep >= 3,
+          state: currentStep >= 3
+          ? StepState.complete
+           : StepState.indexed,
+        ),
+      ],
+    ),
+          const SizedBox(height: 30),
+          
         ],
+        
       ),
     );
   }

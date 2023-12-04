@@ -47,7 +47,7 @@ class Product {
       namedrug: json['namedrug'],
       image: json['image'],
       price: json['price'].toDouble(),
-      quantity: json['quantity'] ?? 1,
+      quantity: json['quantity'] ,
       //enddate: json['enddate'],
     );
   }

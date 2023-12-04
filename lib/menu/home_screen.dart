@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../Products/Cart.dart';
 
-import '../chat/chat.dart';
+//import '../chat/chat.dart';
 
 import 'home_page.dart';
 
@@ -27,8 +27,8 @@ class _HomeScreenState
 
 
 
-
-      ChatScreen(chatName: 'test', image: 'test', receiverId: 'tktk', senderId:email ,email: "email",),
+      ProfilePage(id:email),
+      //ChatScreen(chatName: 'test', image: 'test', receiverId: 'tktk', senderId:email ,email: "email",),
       CartScreen(),
       ProfilePage(id:email),
     ];

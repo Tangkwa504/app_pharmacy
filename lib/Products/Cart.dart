@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../model/Products.dart';
 import '../widgets/Service.dart';
 
 class CartScreen extends StatefulWidget {
+
   @override
   State<CartScreen> createState() => _CartScreenState();
 }
 
 class _CartScreenState extends State<CartScreen> {
+
   @override
   void initState() {
     initproduct();
@@ -47,6 +50,8 @@ class _CartScreenState extends State<CartScreen> {
                   trailing: IconButton(
                     icon: const Icon(Icons.delete),
                     onPressed: () {
+                      
+                      
                       final seviceProvider =
                           Provider.of<ProviderSer>(context, listen: false);
                       cartProvider.removeProduct(

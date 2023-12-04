@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 import 'package:http/http.dart' as http;
-
+import '../model/variable.dart';
 import '../model/Products.dart';
 import '../model/User.dart';
 import '../model/Userid.dart';
@@ -243,7 +243,7 @@ class ProductProvider extends ChangeNotifier {
   }
 
   Future<void> addProduct(Product product, String email) async {
-    print("h[alkghp[ahlpamhp[alehpalwpal;e___]]]" + email);
+   
     final cartRef = fireStore.collection('products').doc(email);
     //final products = _products.map((p) => p.toJson()).toList();
     List<Product> pro = [];
@@ -294,6 +294,7 @@ class CartProvider extends ChangeNotifier {
 
   void logout() {
     _products.clear();
+    
   }
 
   double get totalPrice => _products.fold(
@@ -336,7 +337,9 @@ class CartProvider extends ChangeNotifier {
     await cartRef.update({
       'products': FieldValue.arrayRemove([product.toJson()])
     });
+    
     notifyListeners();
+    
   }
 }
 class Orderprovider extends ChangeNotifier{
@@ -344,6 +347,7 @@ class Orderprovider extends ChangeNotifier{
 
   List<Product> get products => _products;
 
+ 
   FirebaseFirestore fireStore = FirebaseFirestore.instance;
 
   CartProvider() {}
@@ -357,22 +361,24 @@ class Orderprovider extends ChangeNotifier{
 
   void addProduct(Product product, String email) async {
     final index = _products.indexWhere((p) => p.namedrug == product.namedrug);
-    final cartRef = fireStore.collection('carts').doc(email);
+    final cartRef = fireStore.collection('orders').doc(email);
     if (index != -1) {
       _products[index].quantity += product.quantity;
       final productss = _products.map((p) => p.toJson()).toList();
       await cartRef.update({'products': productss});
+      
     } else {
       _products.add(product);
 
       final products = _products.map((p) => p.toJson()).toList();
       await cartRef.set({'products': products});
     }
+    //Variable.product= _products;
     notifyListeners();
   }
 
   Future<void> getProductsInCart(String email) async {
-    final fireCart = fireStore.collection('carts').doc(email);
+    final fireCart = fireStore.collection('orders').doc(email);
     final snapshot = await fireCart.get();
     if (snapshot.exists) {
       final data = snapshot.data() as Map<String, dynamic>;
@@ -386,20 +392,33 @@ class Orderprovider extends ChangeNotifier{
     notifyListeners();
   }
 
+  void addorder(email,orderId)  async{
+    final ordersRef = fireStore.collection('orders/$email/$orderId').doc(email);
+    
+    await ordersRef.set({
+      "order":[{"OrderID":orderId,
+                "status":1,
+                }] 
+      
+    });
+  }
+
   void removeProduct(Product product, String email) async {
     _products.removeWhere((p) => p.namedrug == product.namedrug);
-    final cartRef = fireStore.collection('carts').doc(email);
+    final cartRef = fireStore.collection('orders').doc(email);
     await cartRef.update({
       'products': FieldValue.arrayRemove([product.toJson()])
     });
+    
     notifyListeners();
+    
   }
   
   void clearCart(String email) async {
     _products.clear();
 
     final cartRef = fireStore.collection('carts').doc(email);
-    await cartRef.delete();
+    //await cartRef.delete();
 
     notifyListeners();
   }

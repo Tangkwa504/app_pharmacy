@@ -6,15 +6,21 @@ import 'package:provider/provider.dart';
 
 import '../model/Products.dart';
 import '../widgets/Service.dart';
-import 'Cart.dart';
+
 
 class ProductDetailsScreen extends StatefulWidget {
   final Product product;
   final String email;
+  final String receiverId;
+  final String chatName;
+  final String senderId;
 
   ProductDetailsScreen({
     required this.product,
     required this.email,
+    required this.receiverId,
+    required this.senderId,
+    required this.chatName,
     });
 
   @override
@@ -80,20 +86,29 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
           ElevatedButton(
             onPressed: () {
               // Add product to cart
-               final orderprovider =
+               final cartprovider =
+                   Provider.of<CartProvider>(context, listen: false);
+                    final orderprovider =
                    Provider.of<Orderprovider>(context, listen: false);
-                   final seviceProvider =
-                   Provider.of<ProviderSer>(context, listen: false);
+                  //  final seviceProvider =
+                  //  Provider.of<ProviderSer>(context, listen: false);
                final product = widget.product.copyWith(quantity: quantity);
+               cartprovider.addProduct(product,widget.email);
                orderprovider.addProduct(product,widget.email);
-
+               setState(() {
+                          quantity=1;
+                        });
               // Navigate to the cart screen
               Navigator.push(context, MaterialPageRoute(builder: ((context) => CartScreenchack(
                 email: widget.email,
+                product: product,
+                receiverId:widget.receiverId,
+                    senderId:widget.senderId,
+                    chatName:widget.chatName,
               )))); 
 
             },
-            child: Text('Add to Cart'),
+            child: Text('ไปหน้าต่อไป'),
           ),
         ],
       ),

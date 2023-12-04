@@ -9,7 +9,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
-import '../Products/Productspage.dart';
+
 import '../Products/productspagechat.dart';
 import '../model/chat.dart';
 import '../widgets/Service.dart';

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
+
 import 'package:provider/provider.dart';
 
 import '../model/Products.dart';
 import '../widgets/Service.dart';
-import 'Addproducts.dart';
+
 import 'ProductDetails.dart';
 
 class ProductsPagechat extends StatefulWidget {
@@ -62,6 +62,9 @@ class _ProductsPagechatState extends State<ProductsPagechat> {
                   builder: (context) => ProductDetailsScreen(
                     product: product,
                     email: widget.email,
+                    receiverId:widget.receiverId,
+                    senderId:widget.senderId,
+                    chatName:widget.chatName,
                   ),
                 ),
               );
