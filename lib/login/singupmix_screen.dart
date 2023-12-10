@@ -90,9 +90,7 @@ class _singupmixState extends State<singupmix> {
               onTap: () async {
                 print(profiletestService.imagesFile2 != null);
                 await _pickImage();
-                setState(() {
-                
-              });
+                setState(() {});
               },
               child: Align(
                   alignment: Alignment.center,
@@ -234,14 +232,14 @@ class singupmix2 extends StatefulWidget {
   @override
   State<singupmix2> createState() => _singupmix2State();
 }
- 
- enum SingingCharacter { pharmacy, user } //enum เป็นตัวแปลคล้ายๆบูลีน
+
+enum SingingCharacter { pharmacy, user } //enum เป็นตัวแปลคล้ายๆบูลีน
+
 class _singupmix2State extends State<singupmix2> {
   TextEditingController Fullname = TextEditingController();
   TextEditingController UserAddress = TextEditingController();
   TextEditingController UserTel = TextEditingController();
-  
-  
+
   // SingingCharacter? _character = SingingCharacter.user; //เรียกใช้ enum
 
   @override
@@ -343,8 +341,7 @@ class _singupmix2State extends State<singupmix2> {
                   updata(profileService);
                   Fluttertoast.showToast(
                       msg: "Insert Success", gravity: ToastGravity.TOP);
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) {
                     return LoginScreen();
                   }));
                 } else {

@@ -1,5 +1,10 @@
 import 'dart:convert';
+import 'package:app_pharmacy/core/get_it/di_instance.dart';
+import 'package:app_pharmacy/core/local_storage/base_shared_preference.dart';
+import 'package:app_pharmacy/login/login_successful_screen.dart';
+import 'package:app_pharmacy/login/sign_up_successful_screen.dart';
 import 'package:app_pharmacy/login/singup_pharmacy.dart';
+import 'package:app_pharmacy/login/term_and_condition/term_and_condition_screen.dart';
 import 'package:app_pharmacy/model/Userid.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -12,8 +17,6 @@ import 'package:fluttertoast/fluttertoast.dart';
 
 import 'package:provider/provider.dart';
 
-
-
 import '../firebase_options.dart';
 import '../menu/home_screen.dart';
 import '../widgets/Service.dart';
@@ -24,24 +27,23 @@ class LoginScreen extends StatefulWidget {
   @override
   State<LoginScreen> createState() => _LoginScreenState();
 }
-  List<Info> list = [];
+
+List<Info> list = [];
+
 class _LoginScreenState extends State<LoginScreen> {
-
-
   TextEditingController Emaillogin = TextEditingController();
   TextEditingController PasswordLogin = TextEditingController();
-    @override
+  @override
   void initState() {
-    // TODO: implement initState
     initfirebase();
     super.initState();
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: const BackButton(color:Colors.black87),
+        leading: const BackButton(color: Colors.black87),
         backgroundColor: Colors.transparent,
         elevation: 0.0,
       ),
@@ -51,33 +53,35 @@ class _LoginScreenState extends State<LoginScreen> {
         padding: const EdgeInsets.all(12),
         child: SingleChildScrollView(
           child: Column(
-            children:  [
+            children: [
               const Text(
-                  "Login",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 32,
-                    color: Colors.black87,
-              ),
+                "Login",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 32,
+                  color: Colors.black87,
+                ),
               ),
               const SizedBox(height: 12),
-              Align(alignment: Alignment.center, child: Image.asset('assets/logo.png', width: 200)),
+              Align(
+                  alignment: Alignment.center,
+                  child: Image.asset('assets/logo.png', width: 200)),
               const SizedBox(height: 12),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 width: 400,
-                decoration: BoxDecoration( 
+                decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12),
                   color: Colors.grey.withOpacity(0.4),
                 ),
-                child: TextField( 
-                  controller: Emaillogin,//appservice.Emaillogin,
+                child: TextField(
+                  controller: Emaillogin, //appservice.Emaillogin,
                   textAlignVertical: TextAlignVertical.center,
                   decoration: InputDecoration(
                     prefixIcon: Icon(
                       Icons.email,
                       color: Color.fromARGB(255, 243, 16, 72),
-                      ),
+                    ),
                     hintText: "Email address",
                     border: InputBorder.none,
                   ),
@@ -87,19 +91,19 @@ class _LoginScreenState extends State<LoginScreen> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 width: 400,
-                decoration: BoxDecoration( 
+                decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12),
                   color: Colors.grey.withOpacity(0.4),
                 ),
-                child: TextField( 
+                child: TextField(
                   controller: PasswordLogin,
-                   obscureText: true,
+                  obscureText: true,
                   textAlignVertical: TextAlignVertical.center,
                   decoration: InputDecoration(
                     prefixIcon: Icon(
                       Icons.lock,
                       color: Color.fromARGB(255, 243, 16, 72),
-                      ),
+                    ),
                     hintText: "Password",
                     border: InputBorder.none,
                   ),
@@ -109,8 +113,8 @@ class _LoginScreenState extends State<LoginScreen> {
               InkWell(
                 onTap: () {
                   //print("Test");
-                  
-                  checklogin(Emaillogin.text, PasswordLogin.text,context);
+
+                  checklogin(Emaillogin.text, PasswordLogin.text, context);
                   //Navigator.push(context, MaterialPageRoute(builder: (context) => const HomeScreen(),));
                 },
                 child: Container(
@@ -118,39 +122,43 @@ class _LoginScreenState extends State<LoginScreen> {
                   height: 50,
                   alignment: Alignment.center,
                   padding: const EdgeInsets.all(8),
-                                decoration: BoxDecoration( 
+                  decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(12),
                     color: Color.fromARGB(255, 243, 16, 72),
                   ),
-                  child: const Text( 
+                  child: const Text(
                     "Login",
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+                    style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white),
                   ),
                 ),
               ),
               const SizedBox(height: 12),
-              Row( 
+              Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Text(
-                "Don't have an account?",
-                style: TextStyle( 
-                  color: Colors.black54,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                GestureDetector(
-                  onTap: (){
-                    Navigator.push(context, MaterialPageRoute(builder: ((context) => const singupmixpharmacy()))); 
-                  },
-                  child: const Text(
-                    "Signup",
-                    style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+                    "Don't have an account?",
+                    style: TextStyle(
+                      color: Colors.black54,
                     ),
-                ),
+                  ),
+                  const SizedBox(width: 12),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.of(context)
+                          .pushNamed(TermAndConditionScreen.routeName);
+                    },
+                    child: const Text(
+                      "Signup",
+                      style: TextStyle(
+                          color: Colors.red, fontWeight: FontWeight.bold),
+                    ),
+                  ),
                 ],
               ),
-              
             ],
           ),
         ),
@@ -159,19 +167,16 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 }
 
-
-void checklogin(String user ,String password,context) {
-  
-  readfirebase(user,password,context);
+void checklogin(String user, String password, context) {
+  readfirebase(user, password, context);
   //print(user);
   //print(password);
 }
 
-  void initfirebase() async {
-    await Firebase.initializeApp(
-        options: DefaultFirebaseOptions.currentPlatform);
-    
-  }
+void initfirebase() async {
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+}
+
 //  void readfirebase(user,password,context) async{
 //   DatabaseReference starCountRef = FirebaseDatabase.instance.ref('User');
 //   user
@@ -185,65 +190,77 @@ void checklogin(String user ,String password,context) {
 //             cookieset(val['id'], val['user'], val['name']);
 //           }));
 //  }
- void readfirebase(user,password,context) async {
-    //String user = appservice.Emaillogin.text; //กำหนดตัวแปล user แล้วให้เชื่อมกับ appservice แล้วรับค่ามาจากผู้ใช้ก็คือ .Emaillogin.text
-    ProviderSer profileService =
-        Provider.of<ProviderSer>(context, listen: false);
-    Useridprovider provideruserid =
-        Provider.of<Useridprovider>(context, listen: false);
-    DatabaseReference starCountRef = FirebaseDatabase.instance.ref('Pharmacy');
-    starCountRef.onValue.listen((DatabaseEvent event) {
-      final data = event.snapshot.value;
-      Map<String, dynamic> map = json.decode(json.encode(data));
-      print(map);
-      list = [];
-      map.forEach(
-        (key, value) {
-          if(user==value["Email"]){  //เช็คเมล userlogin
-            if(password==value["Password"]){  //เช็ค pass userlogin
+void readfirebase(user, password, context) async {
+  //String user = appservice.Emaillogin.text; //กำหนดตัวแปล user แล้วให้เชื่อมกับ appservice แล้วรับค่ามาจากผู้ใช้ก็คือ .Emaillogin.text
+  ProviderSer profileService = Provider.of<ProviderSer>(context, listen: false);
+  Useridprovider provideruserid =
+      Provider.of<Useridprovider>(context, listen: false);
+  DatabaseReference starCountRef = FirebaseDatabase.instance.ref('Pharmacy');
+  starCountRef.onValue.listen((DatabaseEvent event) {
+    final data = event.snapshot.value;
+    Map<String, dynamic> map = json.decode(json.encode(data));
+    list = [];
+    map.forEach(
+      (key, value) {
+        if (user == value["Email"]) {
+          //เช็คเมล userlogin
+          if (password == value["Password"]) {
+            //เช็ค pass userlogin
             print(key);
             Fluttertoast.showToast(
-                      msg: "ยินดีต้อนรับคุณ "+ value["Name"]+" เข้าสู่ระบบ", gravity: ToastGravity.TOP,
-                      backgroundColor: Colors.green
-                      );
-                      print(user);
-              String pushemail = user;
-              appservice.email = pushemail;
-              profileService.setemail(user,value["Id"]);
-              profileService.setkey(key);
-              profileService.setuser(value["Name"],value["Password"],value["Addressshop"],value["Tel"]); //เช็ค login pharmacy
-              //profileService.setuser(value["Name"],value["Password"],value["Address"],value["Tel"]); //เช็ค Login User 
-              provideruserid.addConfig(Userid(email: value["Email"]));
+                msg: "ยินดีต้อนรับคุณ " + value["Name"] + " เข้าสู่ระบบ",
+                gravity: ToastGravity.TOP,
+                backgroundColor: Colors.green);
+            String pushemail = user;
+            appservice.email = pushemail;
+            getIt<BaseSharedPreference>().setString(
+              BaseSharePreferenceKey.id,
+              value["Id"],
+            );
+            profileService.setemail(user, value["Id"]);
+            profileService.setkey(key);
+            profileService.setuser(value["Name"], value["Password"],
+                value["Addressshop"], value["Tel"]); //เช็ค login pharmacy
+            //profileService.setuser(value["Name"],value["Password"],value["Address"],value["Tel"]); //เช็ค Login User
+            provideruserid.addConfig(Userid(email: value["Email"]));
 
-              Navigator.push(context,MaterialPageRoute(builder: (context) => HomeScreen(id: pushemail),),);
-              // Navigator.push(context, MaterialPageRoute(builder: ((context) => const HomeScreen())));
-            }else{
-              print("errorpass");
-              // Fluttertoast.showToast(
-              //         msg: "รหัสผ่านไม่ถูกต้อง", gravity: ToastGravity.TOP,
-              //         backgroundColor: Color.fromARGB(255, 243, 16, 72));
-            }
-          }else{
-            print("error");
+            Navigator.pushNamedAndRemoveUntil(
+              context,
+              LoginSuccessfulScreen.routeName,
+              arguments: HomeScreenArgs(id: pushemail),
+              (route) => false,
+            );
+            // MaterialPageRoute(
+            //   builder: (context) => HomeScreen(id: pushemail),
+            // ),
+
+            // Navigator.push(context, MaterialPageRoute(builder: ((context) => const HomeScreen())));
+          } else {
+            print("errorpass");
             // Fluttertoast.showToast(
-            //           msg: "ชื่อผู้ใช้และรหัสผ่านไม่ถูกต้อง", gravity: ToastGravity.TOP,
-            //           backgroundColor: Color.fromARGB(255, 243, 16, 72));
+            //         msg: "รหัสผ่านไม่ถูกต้อง", gravity: ToastGravity.TOP,
+            //         backgroundColor: Color.fromARGB(255, 243, 16, 72));
           }
-        },
-      );
-      list.forEach((element) {
-        print("$element");
-      });
+        } else {
+          print("error");
+          // Fluttertoast.showToast(
+          //           msg: "ชื่อผู้ใช้และรหัสผ่านไม่ถูกต้อง", gravity: ToastGravity.TOP,
+          //           backgroundColor: Color.fromARGB(255, 243, 16, 72));
+        }
+      },
+    );
+    list.forEach((element) {
+      print("$element");
     });
-  }
+  });
+}
 
-  class Info {
+class Info {
   final String Email;
   final String Password;
 
-  const Info(
-      {required this.Email,
-      required this.Password,
-      });
+  const Info({
+    required this.Email,
+    required this.Password,
+  });
 }
-

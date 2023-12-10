@@ -1,6 +1,7 @@
 import 'dart:async';
 
 //import 'package:app_pharmacy/login/singupmix_screen.dart';
+import 'package:app_pharmacy/login/term_and_condition/term_and_condition_screen.dart';
 import 'package:app_pharmacy/menu/home_screen.dart';
 import 'package:app_pharmacy/login/login_screen.dart';
 //import 'package:app_pharmacy/login/singup_screen.dart';
@@ -15,6 +16,8 @@ import 'login/singup_pharmacy.dart';
 import 'widgets/Service.dart';
 
 class FirstPage extends StatefulWidget {
+  static const routeName = 'FirstPage';
+
   const FirstPage({super.key});
 
   @override
@@ -26,97 +29,114 @@ class _FirstPageState extends State<FirstPage> {
     // TODO: implement initState
     init();
     Timer(Duration(seconds: 1), () {
-    checkuserid();
-  });
-    
+      checkuserid();
+    });
+
     super.initState();
   }
+
   void checkuserid() {
     Useridprovider provideruserid =
         Provider.of<Useridprovider>(context, listen: false);
-        var userid = provideruserid.getuserid();
-        int count = userid.length;
-        print("Login count = "+count.toString());
-        if(count != 0){
-          Navigator.push(context,MaterialPageRoute(builder: (context) => HomeScreen(id: userid.last.email),),);
-          }        
+    var userid = provideruserid.getuserid();
+    int count = userid.length;
+    print("Login count = " + count.toString());
+    if (count != 0) {
+      Navigator.pushNamed(
+        context,
+        HomeScreen.routeName,
+        arguments: HomeScreenArgs(id: userid.last.email),
+      );
+    }
   }
-  void init(){
+
+  void init() {
     Provider.of<Useridprovider>(context, listen: false).init();
   }
+
   @override
   Widget build(BuildContext context) {
-  return Scaffold(
+    return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0.0,
       ),
-      
       body: Container(
-        
         width: double.infinity,
         height: double.infinity,
         padding: const EdgeInsets.all(12),
         child: SingleChildScrollView(
           child: Column(
-            children:  [
-              Align(alignment: Alignment.center, child: Image.asset('assets/logo.png', width: 230)),
+            children: [
+              Align(
+                  alignment: Alignment.center,
+                  child: Image.asset('assets/logo.png', width: 230)),
               const SizedBox(height: 12),
               const Text(
-                  "Pharmacy" ,
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 44,
-                    color: Colors.black87,
-              ),
+                "Pharmacy",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 44,
+                  color: Colors.black87,
+                ),
               ),
               const Text(
-                  "Shop" ,
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 44,
-                    color: Colors.black87,
-              ),
+                "Shop",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 44,
+                  color: Colors.black87,
+                ),
               ),
               const SizedBox(height: 50),
-              
+
               InkWell(
                 onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginScreen(),));
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const LoginScreen(),
+                      ));
                 },
                 child: Container(
                   width: 200,
                   height: 50,
                   alignment: Alignment.center,
                   padding: const EdgeInsets.all(8),
-                                decoration: BoxDecoration( 
+                  decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(12),
                     color: Color.fromARGB(255, 64, 103, 211),
                   ),
-                  child: const Text( 
+                  child: const Text(
                     "LOGIN",
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
-                    
+                    style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white),
                   ),
                 ),
               ),
               const SizedBox(height: 12),
               InkWell(
                 onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => const singupmixpharmacy(),));
+                  Navigator.of(context)
+                      .pushNamed(TermAndConditionScreen.routeName);
                 },
                 child: Container(
                   width: 200,
                   height: 50,
                   alignment: Alignment.center,
                   padding: const EdgeInsets.all(8),
-                                decoration: BoxDecoration( 
+                  decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(12),
-                    color: Color.fromARGB(255, 243, 16, 72),
+                    color: const Color.fromARGB(255, 243, 16, 72),
                   ),
-                  child: const Text( 
+                  child: const Text(
                     "REGISTER",
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+                    style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white),
                   ),
                 ),
               ),
@@ -167,11 +187,11 @@ class _FirstPageState extends State<FirstPage> {
               //     height: 50,
               //     alignment: Alignment.center,
               //     padding: const EdgeInsets.all(8),
-              //                   decoration: BoxDecoration( 
+              //                   decoration: BoxDecoration(
               //       borderRadius: BorderRadius.circular(12),
               //       color: Color.fromARGB(255, 131, 126, 127),
               //     ),
-              //     child: const Text( 
+              //     child: const Text(
               //       "CONTINUE AS GUEST",
               //       style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
               //     ),

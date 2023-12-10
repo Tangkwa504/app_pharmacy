@@ -12,7 +12,8 @@ class _ShoppingCartState extends State<ShoppingCart> {
       "name": "Product 1",
       "price": 10.99,
       "quantity": 2,
-      "imageUrl": "https://ocs-k8s-prod.s3.ap-southeast-1.amazonaws.com/PRODUCT_1619081525308.jpeg",
+      "imageUrl":
+          "https://ocs-k8s-prod.s3.ap-southeast-1.amazonaws.com/PRODUCT_1619081525308.jpeg",
     },
     {
       "id": 2,
@@ -40,7 +41,8 @@ class _ShoppingCartState extends State<ShoppingCart> {
               width: 50,
             ),
             title: Text(item["name"]),
-            subtitle: Text('ราคา: ${item["price"]} บาท, จำนวน: ${item["quantity"]}'),
+            subtitle:
+                Text('ราคา: ${item["price"]} บาท, จำนวน: ${item["quantity"]}'),
             trailing: IconButton(
               icon: Icon(Icons.delete),
               onPressed: () {
@@ -53,62 +55,61 @@ class _ShoppingCartState extends State<ShoppingCart> {
         },
       ),
       bottomNavigationBar: Container(
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 5,
-            ),
-          ],
-        ),
-        child: Row(
-  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  children: [
-    Text(
-      'Total: \$${_calculateTotal().toStringAsFixed(2)}',
-      style: TextStyle(
-        fontSize: 18,
-        fontWeight: FontWeight.bold,
-      ),
-    ),
-    Row(
-      children: [
-        ElevatedButton.icon(
-          icon: const Icon(
-            Icons.add,
-            color: Colors.pink,
-            size: 24.0,
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                blurRadius: 5,
+              ),
+            ],
           ),
-          onPressed: () {
-            // handle add
-          },
-          style: ElevatedButton.styleFrom(primary: Colors.green),
-          label: const Text('เพิ่มยา'),
-        ),
-        SizedBox(width: 16),
-        ElevatedButton(
-          onPressed: () {
-            // handle checkout
-          },
-          child: Text('ชำระเงิน'),
-        ),
-        SizedBox(width: 16),
-        ElevatedButton.icon(
-          icon: const Icon(
-            Icons.favorite,
-            color: Colors.pink,
-            size: 24.0,
-          ),
-          label: const Text('Elevated Button'),
-          onPressed: () {},
-        )
-      ],
-    ),
-  ],
-)
-      ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Total: \$${_calculateTotal().toStringAsFixed(2)}',
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Row(
+                children: [
+                  ElevatedButton.icon(
+                    icon: const Icon(
+                      Icons.add,
+                      color: Colors.pink,
+                      size: 24.0,
+                    ),
+                    onPressed: () {
+                      // handle add
+                    },
+                    style: ElevatedButton.styleFrom(primary: Colors.green),
+                    label: const Text('เพิ่มยา'),
+                  ),
+                  const SizedBox(width: 16),
+                  ElevatedButton(
+                    onPressed: () {
+                      // handle checkout
+                    },
+                    child: const Text('ชำระเงิน'),
+                  ),
+                  const SizedBox(width: 16),
+                  ElevatedButton.icon(
+                    icon: const Icon(
+                      Icons.favorite,
+                      color: Colors.pink,
+                      size: 24.0,
+                    ),
+                    label: const Text('Elevated Button'),
+                    onPressed: () {},
+                  )
+                ],
+              ),
+            ],
+          )),
     );
   }
 
@@ -122,5 +123,3 @@ class _ShoppingCartState extends State<ShoppingCart> {
     return total;
   }
 }
-
-

@@ -3,6 +3,10 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
+import 'package:app_pharmacy/generated/assets.gen.dart';
+import 'package:app_pharmacy/login/bloc/authentication_bloc.dart';
+import 'package:app_pharmacy/login/sign_up_successful_screen.dart';
+import 'package:app_pharmacy/widgets/base_upload_image.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -30,10 +34,16 @@ String Nameshop = "";
 String Addressshop = "";
 String Timeopening = "";
 String Timeclosing = "";
-late double lat  ;
-late double long ;
+XFile? imgLiences;
+XFile? imgLiencesStore;
+XFile? imgQRcode;
+
+late double lat;
+late double long;
 
 class singupmixpharmacy extends StatefulWidget {
+  static const routeName = 'singupmixpharmacy';
+
   const singupmixpharmacy({super.key});
 
   @override
@@ -63,11 +73,10 @@ class _singupmixpharmacyState extends State<singupmixpharmacy> {
   }
 
   bool isValidEmail(String email) {
-  // ใช้ Regular Expression เพื่อตรวจสอบรูปแบบอีเมล
-  final emailRegex = RegExp(r'^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$');
-  return emailRegex.hasMatch(email);
-}  
-  
+    // ใช้ Regular Expression เพื่อตรวจสอบรูปแบบอีเมล
+    final emailRegex = RegExp(r'^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$');
+    return emailRegex.hasMatch(email);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -169,9 +178,9 @@ class _singupmixpharmacyState extends State<singupmixpharmacy> {
                   Fluttertoast.showToast(
                     msg: "ประเภทของอีเมลที่ใช้สมัครไม่ถูกต้อง",
                     gravity: ToastGravity.TOP,
-                    );
-                    return;
-                    }
+                  );
+                  return;
+                }
                 DatabaseReference starCountRef =
                     FirebaseDatabase.instance.ref('Pharmacy');
                 starCountRef.onValue.listen((DatabaseEvent event) {
@@ -188,6 +197,10 @@ class _singupmixpharmacyState extends State<singupmixpharmacy> {
                         });
                         print("$iserror = Iserror");
                         print("value has been set true");
+                      } else {
+                        setState(() {
+                          iserror = false;
+                        });
                       }
                     },
                   );
@@ -205,11 +218,7 @@ class _singupmixpharmacyState extends State<singupmixpharmacy> {
                       UserPass.text == Checkpass.text) {
                     Email = Emailinput.text;
                     Password = UserPass.text;
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const singupmix2(),
-                        ));
+                    Navigator.of(context).pushNamed(singupmix2.routeName);
                   } else if (UserPass.text != Checkpass.text) {
                     Fluttertoast.showToast(
                         msg: "รหัสผ่านไม่ตรงกัน", gravity: ToastGravity.TOP);
@@ -218,9 +227,6 @@ class _singupmixpharmacyState extends State<singupmixpharmacy> {
                         msg: "โปรดกรอกข้อมูลให้ครบถ้วน",
                         gravity: ToastGravity.TOP);
                   }
-                  // Email = Emailinput.text;
-                  // Password = UserPass.text;
-                  // Navigator.push(context, MaterialPageRoute(builder: (context) => const singupmix2(),));
                 });
               },
               child: Container(
@@ -275,6 +281,8 @@ class _singupmixpharmacyState extends State<singupmixpharmacy> {
 }
 
 class singupmix2 extends StatefulWidget {
+  static const routeName = 'singupmix2';
+
   const singupmix2({super.key});
 
   @override
@@ -286,17 +294,16 @@ class _singupmix2State extends State<singupmix2> {
   TextEditingController Fullname = TextEditingController();
   TextEditingController Pharmacylicense = TextEditingController();
   TextEditingController UserTel = TextEditingController();
+  XFile? _file;
 
   @override
   void initState() {
-    // TODO: implement initState
     initfirebase();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
@@ -309,8 +316,6 @@ class _singupmix2State extends State<singupmix2> {
         height: double.infinity,
         padding: const EdgeInsets.all(12),
         child: Column(
-          //crossAxisAlignment: CrossAxisAlignment.start,
-
           children: [
             const Text(
               "Register",
@@ -320,8 +325,6 @@ class _singupmix2State extends State<singupmix2> {
                 color: Colors.black87,
               ),
             ),
-            const SizedBox(height: 12),
-            // Align(alignment: Alignment.center, child: Image.asset('assets/logo.png', width: 200)),
             const SizedBox(height: 12),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -333,7 +336,7 @@ class _singupmix2State extends State<singupmix2> {
               child: TextField(
                 controller: Fullname,
                 textAlignVertical: TextAlignVertical.center,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   hintText: "Name",
                   border: InputBorder.none,
                 ),
@@ -350,8 +353,8 @@ class _singupmix2State extends State<singupmix2> {
               child: TextField(
                 controller: Pharmacylicense,
                 textAlignVertical: TextAlignVertical.center,
-                decoration: InputDecoration(
-                  hintText: "Pharmacylicense",
+                decoration: const InputDecoration(
+                  hintText: "Pharmacy License",
                   border: InputBorder.none,
                 ),
               ),
@@ -367,26 +370,35 @@ class _singupmix2State extends State<singupmix2> {
               child: TextField(
                 controller: UserTel,
                 textAlignVertical: TextAlignVertical.center,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   hintText: "Tel:",
                   border: InputBorder.none,
                 ),
               ),
+            ),
+            const SizedBox(
+              height: 12,
+            ),
+            BaseUploadImage(
+              label: 'รูปใบอนุญาต',
+              onUpload: (file) async {
+                setState(() {
+                  _file = file;
+                });
+              },
             ),
             const SizedBox(height: 12),
             InkWell(
               onTap: () {
                 if (Fullname.text.isNotEmpty &&
                     Pharmacylicense.text.isNotEmpty &&
-                    UserTel.text.isNotEmpty) {
+                    UserTel.text.isNotEmpty &&
+                    _file != null) {
                   Name = Fullname.text;
                   Licensepharmacy = Pharmacylicense.text;
                   Tel = UserTel.text;
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const singupmix3(),
-                      ));
+                  imgLiences = _file;
+                  Navigator.of(context).pushNamed(singupmix3.routeName);
                 } else {
                   Fluttertoast.showToast(
                       msg: "โปรดกรอกข้อมูลให้ครบถ้วน",
@@ -395,7 +407,6 @@ class _singupmix2State extends State<singupmix2> {
                 // Name = Fullname.text;
                 // Address = UserAddress.text;
                 // Tel = UserTel.text;
-                // updata();
                 // Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginScreen(),));
               },
               child: Container(
@@ -405,7 +416,7 @@ class _singupmix2State extends State<singupmix2> {
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12),
-                  color: Color.fromARGB(255, 243, 16, 72),
+                  color: const Color.fromARGB(255, 243, 16, 72),
                 ),
                 child: const Text(
                   "NEXT",
@@ -450,6 +461,8 @@ class _singupmix2State extends State<singupmix2> {
 }
 
 class singupmix3 extends StatefulWidget {
+  static const routeName = 'singupmix3';
+
   const singupmix3({super.key});
 
   @override
@@ -462,7 +475,9 @@ class _singupmix3State extends State<singupmix3> {
   TextEditingController Shopaddress = TextEditingController();
   TextEditingController Openingtime = TextEditingController();
   TextEditingController Closingtime = TextEditingController();
-
+  TextEditingController licensesStore = TextEditingController();
+  XFile? fileLicenseStore;
+  XFile? fileQrCode;
   //ImagePicker _picker = ImagePicker();
   ImagePicker _pickershop = ImagePicker();
   Position? userLocation;
@@ -481,7 +496,6 @@ class _singupmix3State extends State<singupmix3> {
 
   Future<void> _pickImageshop() async {
     final pickedFile = await _pickershop.pickImage(source: ImageSource.gallery);
-    print("test");
     if (pickedFile != null) {
       List<File> images = [];
       File imageFile = File(pickedFile.path);
@@ -519,7 +533,6 @@ class _singupmix3State extends State<singupmix3> {
 
   @override
   void initState() {
-    // TODO: implement initState
     initfirebase();
     _getLocation();
     super.initState();
@@ -542,7 +555,6 @@ class _singupmix3State extends State<singupmix3> {
     userLocation = await Geolocator.getCurrentPosition();
   } */
 
-
   @override
   Widget build(BuildContext context) {
     ProviderSer profileService =
@@ -555,13 +567,8 @@ class _singupmix3State extends State<singupmix3> {
         elevation: 0.0,
         backgroundColor: Colors.transparent,
       ),
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        padding: const EdgeInsets.all(12),
+      body: SingleChildScrollView(
         child: Column(
-          //crossAxisAlignment: CrossAxisAlignment.start,
-
           children: [
             const Text(
               "Shop Detail",
@@ -599,50 +606,54 @@ class _singupmix3State extends State<singupmix3> {
               child: TextField(
                 controller: Shopname,
                 textAlignVertical: TextAlignVertical.center,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   hintText: "Shopname",
                   border: InputBorder.none,
                 ),
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(
+              height: 12,
+            ),
             InkWell(
               onTap: () async {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) {
-                          return MapLocationPicker(
-                            apiKey: "AIzaSyAqyETt9iu7l5QioWz5iwEbzrallQrpzLs",
-                            popOnNextButtonTaped: true,
-                            currentLatLng: LatLng(userLocation!.latitude,userLocation!.longitude),
-                            onNext: (GeocodingResult? result) {
-                              if (result != null) {
-                                Location latlong = result.geometry.location;
-                                setState(() {
-                                  print("1=============> ${result.formattedAddress}");
-                                  Shopaddress.text = result.formattedAddress.toString();
-                                  print("=============> ${latlong.lat}");
-                                  print("=============> ${latlong.lng}");
-                                  lat  = latlong.lat;
-                                  long = latlong.lng;
-                                });
-                              }
-                            },
-                            onSuggestionSelected:
-                                (PlacesDetailsResponse? result) {
-                              if (result != null) {
-                                setState(() {
-                                  print(result.result.geometry!.location);
-                                  result.result.formattedAddress ?? "";
-                                });
-                              }
-                            },
-                          );
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) {
+                      return MapLocationPicker(
+                        apiKey: "AIzaSyAqyETt9iu7l5QioWz5iwEbzrallQrpzLs",
+                        popOnNextButtonTaped: true,
+                        currentLatLng: LatLng(
+                            userLocation!.latitude, userLocation!.longitude),
+                        onNext: (GeocodingResult? result) {
+                          if (result != null) {
+                            Location latlong = result.geometry.location;
+                            setState(() {
+                              print(
+                                  "1=============> ${result.formattedAddress}");
+                              Shopaddress.text =
+                                  result.formattedAddress.toString();
+                              print("=============> ${latlong.lat}");
+                              print("=============> ${latlong.lng}");
+                              lat = latlong.lat;
+                              long = latlong.lng;
+                            });
+                          }
                         },
-                      ),
-                    );
-                  },
+                        onSuggestionSelected: (PlacesDetailsResponse? result) {
+                          if (result != null) {
+                            setState(() {
+                              print(result.result.geometry!.location);
+                              result.result.formattedAddress ?? "";
+                            });
+                          }
+                        },
+                      );
+                    },
+                  ),
+                );
+              },
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 width: 400,
@@ -661,7 +672,9 @@ class _singupmix3State extends State<singupmix3> {
                 ),
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(
+              height: 12,
+            ),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               width: 400,
@@ -672,7 +685,7 @@ class _singupmix3State extends State<singupmix3> {
               child: TextField(
                 controller: Openingtime,
                 textAlignVertical: TextAlignVertical.center,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   hintText: "Openingtime",
                   border: InputBorder.none,
                 ),
@@ -689,10 +702,55 @@ class _singupmix3State extends State<singupmix3> {
               child: TextField(
                 controller: Closingtime,
                 textAlignVertical: TextAlignVertical.center,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   hintText: "Closingtime",
                   border: InputBorder.none,
                 ),
+              ),
+            ),
+            const SizedBox(height: 12),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              width: 400,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                color: Colors.grey.withOpacity(0.4),
+              ),
+              child: TextField(
+                controller: licensesStore,
+                textAlignVertical: TextAlignVertical.center,
+                decoration: const InputDecoration(
+                  hintText: "License Store",
+                  border: InputBorder.none,
+                ),
+              ),
+            ),
+            const SizedBox(
+              height: 12,
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              child: BaseUploadImage(
+                label: 'รูปใบอนุญาต',
+                onUpload: (file) async {
+                  setState(() {
+                    fileLicenseStore = file;
+                  });
+                },
+              ),
+            ),
+            const SizedBox(
+              height: 12,
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              child: BaseUploadImage(
+                label: 'QRcode รับเงิน',
+                onUpload: (file) async {
+                  setState(() {
+                    fileQrCode = file;
+                  });
+                },
               ),
             ),
             const SizedBox(height: 12),
@@ -701,27 +759,27 @@ class _singupmix3State extends State<singupmix3> {
                 if (Shopname.text.isNotEmpty &&
                     Shopaddress.text.isNotEmpty &&
                     Openingtime.text.isNotEmpty &&
-                    Closingtime.text.isNotEmpty) {
+                    Closingtime.text.isNotEmpty &&
+                    fileQrCode != null &&
+                    fileLicenseStore != null) {
                   Nameshop = Shopname.text;
                   Addressshop = Shopaddress.text;
                   Timeopening = Openingtime.text;
                   Timeclosing = Closingtime.text;
-                  updata(profileService);
+                  imgLiencesStore = fileLicenseStore;
+                  imgQRcode = fileQrCode;
+                  updata(profileService, context);
                   Fluttertoast.showToast(
                       msg: "Insert Success", gravity: ToastGravity.TOP);
-                  Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return LoginScreen();
-                  }));
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                    SignUpSuccessfulScreen.routeName,
+                    (route) => false,
+                  );
                 } else {
                   Fluttertoast.showToast(
                       msg: "โปรดกรอกข้อมูลให้ครบถ้วน",
                       gravity: ToastGravity.TOP);
                 }
-                // Name = Fullname.text;
-                // Address = UserAddress.text;
-                // Tel = UserTel.text;
-                // updata();
-                // Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginScreen(),));
               },
               child: Container(
                 width: 400,
@@ -730,7 +788,7 @@ class _singupmix3State extends State<singupmix3> {
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12),
-                  color: Color.fromARGB(255, 243, 16, 72),
+                  color: const Color.fromARGB(255, 243, 16, 72),
                 ),
                 child: const Text(
                   "REGISTER",
@@ -754,66 +812,76 @@ bool checkemail(String user) {
   starCountRef.onValue.listen((DatabaseEvent event) {
     final data = event.snapshot.value;
     Map<String, dynamic> map = json.decode(json.encode(data));
-    print("this is value from user : $user");
     map.forEach(
       (key, value) {
-        print("this is value from firebase : ${value['Email']}");
         if (user == value["Email"].toString()) {
           //เช็คเมล userlogin
           iserror = true;
-          print("$iserror = Iserror");
-          print("value has been set true");
         }
       },
     );
-    /* list.forEach((element) {
-        print("$element");
-      }); */
   });
-  print("$iserror = after return");
   return iserror;
 }
 
 void initfirebase() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  print("initfirebase");
 }
 
-void writefirebase(ProviderSer provider) async {
+void writefirebase(ProviderSer provider, BuildContext context) async {
   String _chars =
       'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
   Random _rnd = Random();
 
-
-  
-
   String getRandomString(int length) => String.fromCharCodes(Iterable.generate(
       length, (_) => _chars.codeUnitAt(_rnd.nextInt(_chars.length))));
-      String rendomString = getRandomString(10);
+  String rendomString = getRandomString(10);
   String path = "Pharmacy/${rendomString}";
+
+  final licensesPhamarcyUrl = await context
+      .read<AuthenticationBloc>()
+      .uploadLicensesPhamarcy(imgLiences);
+
+  // ignore: use_build_context_synchronously
+  final licensesPhamarcyStoreUrl = await context
+      .read<AuthenticationBloc>()
+      .uploadLicensesPhamarcyStore(imgLiencesStore);
+
+  final qrcodeUrl =
+      // ignore: use_build_context_synchronously
+      await context.read<AuthenticationBloc>().uploadQRCode(imgQRcode);
+
   DatabaseReference ref = FirebaseDatabase.instance.ref(path);
+
   await ref.set({
     "Email": Email,
     "Password": Password,
     "Licensepharmacy": Licensepharmacy,
+    "img_license_url": licensesPhamarcyUrl,
+    "img_license_store_url": licensesPhamarcyStoreUrl,
+    "img_qr_code": qrcodeUrl,
     "Name": Name,
     "Tel": Tel,
     "Nameshop": Nameshop,
     "Addressshop": Addressshop,
     "Timeopening": Timeopening,
     "Timeclosing": Timeclosing,
-    "latitude"  : lat,
-    "longitude" : long,
+    "latitude": lat,
+    "longitude": long,
     "Id": rendomString,
-    "requset"   : [{"email":"testmail","status":1},{"email":"testmail2","status":0}]
-
+    "requset": [
+      {"email": "testmail", "status": 1},
+      {"email": "testmail2", "status": 0}
+    ],
+    "status": "waiting",
+    "profile_img_url": '',
   });
-  provider.setemail(Email,rendomString);
+  provider.setemail(Email, rendomString);
   provider.uploadImages();
   provider.uploadImagesshop();
   provider.createcol(Email);
 }
 
-void updata(ProviderSer provider) {
-  writefirebase(provider);
+void updata(ProviderSer provider, BuildContext context) {
+  writefirebase(provider, context);
 }
